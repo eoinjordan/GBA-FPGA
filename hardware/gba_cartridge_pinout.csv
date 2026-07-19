@@ -1,0 +1,33 @@
+pin,signal,direction_from_console,notes
+1,VCC_3V3,power,3.3 V cartridge supply
+2,PHI,out,system clock for supported cartridge hardware
+3,/WR,out,active-low write strobe
+4,/RD,out,active-low read strobe
+5,/CS,out,ROM chip select and address latch
+6,AD0,bidirectional,multiplexed lower address and data
+7,AD1,bidirectional,multiplexed lower address and data
+8,AD2,bidirectional,multiplexed lower address and data
+9,AD3,bidirectional,multiplexed lower address and data
+10,AD4,bidirectional,multiplexed lower address and data
+11,AD5,bidirectional,multiplexed lower address and data
+12,AD6,bidirectional,multiplexed lower address and data
+13,AD7,bidirectional,multiplexed lower address and data
+14,AD8,bidirectional,multiplexed lower address and data
+15,AD9,bidirectional,multiplexed lower address and data
+16,AD10,bidirectional,multiplexed lower address and data
+17,AD11,bidirectional,multiplexed lower address and data
+18,AD12,bidirectional,multiplexed lower address and data
+19,AD13,bidirectional,multiplexed lower address and data
+20,AD14,bidirectional,multiplexed lower address and data
+21,AD15,bidirectional,multiplexed lower address and data
+22,A16,out,upper address
+23,A17,out,upper address
+24,A18,out,upper address
+25,A19,out,upper address
+26,A20,out,upper address
+27,A21,out,upper address
+28,A22,out,upper address
+29,A23,out,upper address
+30,/CS2,out,save or auxiliary select depending on cartridge
+31,IRQ,in,cartridge interrupt
+32,GND,power,ground

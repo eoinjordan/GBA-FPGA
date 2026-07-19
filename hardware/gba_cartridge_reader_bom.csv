@@ -1,0 +1,11 @@
+reference,quantity,description,requirement
+J1,1,GBA cartridge edge connector,32-pin compatible connector
+U1,1,RP2350 or FPGA/MCU target,3.3 V I/O with sufficient GPIO
+U2,1,3.3 V regulator,current limited and sized for cartridge load
+R1-R28,28,series resistor,22 to 68 ohm starting range near active driver
+RN1-RN4,4,weak pull-up network,approximately 10 kohm as required by controls
+C1-C6,6,decoupling capacitor,100 nF near devices and connector supply
+C7,1,bulk capacitor,10 to 47 uF near cartridge supply
+TP1-TP8,8,test point,CS RD WR CS2 clock power ground and selected AD
+SW1,1,power switch or load switch,prevents insertion under power during bring-up
+F1,1,resettable fuse or current limiter,protects cartridge and prototype wiring

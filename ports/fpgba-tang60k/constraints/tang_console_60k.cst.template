@@ -1,0 +1,18 @@
+// Tang Console / Mega 60K constraint template.
+//
+// DO NOT assign pins from memory or from another board revision.
+// Copy the exact Sipeed reference project constraints for your SOM and carrier,
+// then map the named ports below after checking the schematic and I/O bank voltage.
+
+// IO_LOC "clk_core" <PIN>;
+// IO_PORT "clk_core" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+
+// IO_LOC "external_reset_n" <PIN>;
+// IO_PORT "external_reset_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// Buttons are active low.
+// IO_LOC "button_a_n" <PIN>;
+// IO_PORT "button_a_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// Repeat for B, Start, Select, D-pad, L, and R.
+// Add DDR3, SD, RGB/HDMI, audio, and debug constraints from the exact carrier reference design.

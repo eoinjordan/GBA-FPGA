@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "projects": [
+    {
+      "name": "FPGBA",
+      "url": "https://github.com/Kitrinx/FPGBA.git",
+      "path": "external/FPGBA"
+    },
+    {
+      "name": "GBATang",
+      "url": "https://github.com/nand2mario/gbatang.git",
+      "path": "external/gbatang"
+    },
+    {
+      "name": "GBTang",
+      "url": "https://github.com/fjpolo/GBTang.git",
+      "path": "external/GBTang"
+    },
+    {
+      "name": "GBA-Studio",
+      "url": "https://github.com/eoinjordan/GBA-Studio.git",
+      "path": "external/GBA-Studio"
+    },
+    {
+      "name": "GBA-engine",
+      "url": "https://github.com/eoinjordan/GBA-engine.git",
+      "path": "external/GBA-engine"
+    },
+    {
+      "name": "gba-cart-read",
+      "url": "https://github.com/Daft-Freak/gba-cart-read.git",
+      "path": "external/gba-cart-read"
+    },
+    {
+      "name": "VerilogBoy",
+      "url": "https://github.com/zephray/VerilogBoy.git",
+      "path": "external/VerilogBoy"
+    },
+    {
+      "name": "paperboy",
+      "url": "https://gitlab.com/zephray/paperboy.git",
+      "path": "external/paperboy"
+    },
+    {
+      "name": "SNESTang",
+      "url": "https://github.com/nand2mario/snestang.git",
+      "path": "external/snestang"
+    },
+    {
+      "name": "NESTang",
+      "url": "https://github.com/nand2mario/nestang.git",
+      "path": "external/nestang"
+    },
+    {
+      "name": "SNES-Studio",
+      "url": "https://github.com/eoinjordan/snes-studio.git",
+      "path": "external/snes-studio"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Please cite this repository and the upstream core used in your build."
+title: "GBA-FPGA: Open GBA handheld integration workbench"
+type: software
+authors:
+  - family-names: Jordan
+    given-names: Eoin
+repository-code: "https://github.com/eoinjordan/GBA-FPGA"
+license: GPL-2.0-or-later
+version: 0.1.0
+date-released: 2026-07-19
+keywords:
+  - FPGA
+  - Game Boy Advance
+  - Tang Nano 20K
+  - Tang Mega 60K
+  - FPGBA
+  - GBATang

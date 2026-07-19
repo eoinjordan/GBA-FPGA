@@ -1,0 +1,14 @@
+logical_button,label,required,active_level,reuse_on_gba
+up,D-pad Up,yes,low,yes
+down,D-pad Down,yes,low,yes
+left,D-pad Left,yes,low,yes
+right,D-pad Right,yes,low,yes
+a,A,yes,low,yes
+b,B,yes,low,yes
+x,X,yes,low,no
+y,Y,yes,low,no
+l,L,yes,low,yes
+r,R,yes,low,yes
+start,Start,yes,low,yes
+select,Select,yes,low,yes
+menu,Menu/OSD,recommended,low,core-specific
