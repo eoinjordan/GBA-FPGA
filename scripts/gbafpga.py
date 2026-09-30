@@ -200,7 +200,7 @@ def pick_gowin(explicit: Optional[str], wanted_version: Optional[str]) -> Option
 
 LOCAL_PROJECT = "gba_lcd_480x272"
 LOCAL_DIR = REPO / "tangnano20k" / LOCAL_PROJECT
-LOCAL_PROJECTS = {LOCAL_PROJECT, "gbtang_lcd"}
+LOCAL_PROJECTS = {LOCAL_PROJECT, "gbtang_lcd", "studio_lcd"}
 UPSTREAM_KEYS = {"gbtang": "GBTang", "snestang": "SNESTang"}
 PROJECTS = sorted(LOCAL_PROJECTS) + sorted(UPSTREAM_KEYS)
 BOARD = "tangnano20k"                      # openFPGALoader board name
@@ -368,6 +368,17 @@ def _testbenches() -> List[tuple]:
          [rtl / "video/rgb_lcd_timing.sv",
           REPO / "tangnano20k/gbtang_lcd/src/gb_lcd_video.sv",
           REPO / "tangnano20k/gbtang_lcd/sim/gb_lcd_video_tb.sv"]),
+        ("Studio memory bus", "studio_bus_tb",
+         [REPO / "tangnano20k/studio_lcd/src/rv_fast_bus.sv",
+          REPO / "tangnano20k/studio_lcd/src/rv_sdram_bus.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_bus_tb.sv"]),
+        ("Studio LCD video", "studio_lcd_video_tb",
+         [rtl / "video/rgb_lcd_timing.sv",
+          REPO / "tangnano20k/studio_lcd/src/studio_lcd_video.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_lcd_video_tb.sv"]),
+        ("Studio hardware renderer", "studio_renderer_tb",
+         [REPO / "tangnano20k/studio_lcd/src/studio_renderer.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_renderer_tb.sv"]),
         ("gba_cart_rom_reader", "gba_cart_rom_reader_tb",
          [rtl / "cart/gba_cart_rom_reader.sv", rtl / "cart/gba_cart_rom_reader_tb.sv"]),
         ("tangnano20k gba_lcd_top", "gba_lcd_top_tb",

@@ -54,6 +54,7 @@ module gbtang_lcd_top (
         .rx_valid(rx_valid),.rx_data(rx_data),.write_addr(loader_addr),
         .write_data(loader_data),.write_valid(loader_write),.loaded(loaded),
         .keys(serial_keys),.cart_addr(gb_addr),.fault(fault),
+        .debug_pc({16'd0,gb_addr}),.debug_addr({16'd0,gb_addr}),
         .tx_valid(tx_valid),.tx_data(tx_data),.tx_ready(tx_ready));
     wire [1:0] board_keys;
     gba_buttons #(.BUTTON_COUNT(2),.ACTIVE_LOW(0),.TICK_CYCLES(21600)) buttons (

@@ -1,13 +1,17 @@
 // Local ROM loading protocol: GBLD, uint32 length, bytes, uint32 CRC32 (LE).
 // Q returns GBST + loaded + byte count + CRC32 + cart address + CPU fault.
 // K followed by an active-high GB key mask changes the serial buttons.
-module gb_uart_loader (
+module gb_uart_loader #(
+    parameter [7:0] MAGIC0="G", MAGIC1="B",
+    parameter [31:0] MIN_BYTES=32768, MAX_BYTES=1048576
+) (
     input wire clk, resetn,
     input wire rx_valid, input wire [7:0] rx_data,
     output reg [21:0] write_addr,
     output reg [7:0] write_data, output reg write_valid,
     output reg loaded, output reg [7:0] keys,
     input wire [15:0] cart_addr, input wire fault,
+    input wire [31:0] debug_pc, debug_addr,
     output wire tx_valid, output reg [7:0] tx_data, input wire tx_ready
 );
     function automatic [31:0] crc_byte(input [31:0] crc, input [7:0] value);
@@ -33,7 +37,7 @@ module gb_uart_loader (
     assign tx_valid = sending;
     always @* begin
         case (tx_index)
-          0: tx_data="G"; 1: tx_data="B"; 2: tx_data="S"; 3: tx_data="T";
+          0: tx_data=MAGIC0; 1: tx_data=MAGIC1; 2: tx_data="S"; 3: tx_data="T";
           4: tx_data={7'd0,reply_loaded};
           5,6,7,8: tx_data=reply_count >> ((tx_index-5)*8);
           9,10,11,12: tx_data=reply_crc >> ((tx_index-9)*8);
@@ -68,16 +72,22 @@ module gb_uart_loader (
             end else if (rx_valid) begin
                 case (state)
                   IDLE: case (rx_data)
-                    "G": state<=MAGIC_B;
+                    MAGIC0: state<=MAGIC_B;
                     "K": state<=KEY;
                     "Q": if (!sending) begin
                         reply_loaded<=loaded; reply_count<=count; reply_crc<=~crc;
                         reply_addr<=cart_addr; reply_fault<=fault;
                         sending<=1; tx_index<=0;
                     end
+                    "P","H","A": if (!sending) begin
+                        reply_loaded<=loaded; reply_count<=count; reply_crc<=~crc;
+                        reply_addr<=rx_data=="P" ? debug_pc[15:0] :
+                            rx_data=="H" ? debug_pc[31:16] : debug_addr[15:0];
+                        reply_fault<=fault; sending<=1; tx_index<=0;
+                    end
                     default: ;
                   endcase
-                  MAGIC_B: state <= rx_data=="B" ? MAGIC_L : IDLE;
+                  MAGIC_B: state <= rx_data==MAGIC1 ? MAGIC_L : IDLE;
                   MAGIC_L: state <= rx_data=="L" ? MAGIC_D : IDLE;
                   MAGIC_D: if (rx_data=="D") begin
                       loaded<=0; length<=0; count<=0; crc<=32'hffffffff;
@@ -88,7 +98,7 @@ module gb_uart_loader (
                       index<=index+1'b1;
                       if (index==3) begin
                           // Cart RAM begins at 1 MiB in the upstream memory map.
-                          if (rx_data==0 && length>=32768 && length<=1048576)
+                          if (rx_data==0 && length>=MIN_BYTES && length<=MAX_BYTES)
                               state<=PAYLOAD;
                           else state<=IDLE;
                       end

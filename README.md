@@ -2,8 +2,7 @@
 
 FPGA work towards a GBA-shaped handheld on Sipeed Tang boards.
 
-A Game Boy Advance core does not fit the Tang Nano 20K, so on that board this
-repository provides:
+For the Tang Nano 20K, this repository provides:
 
 - **gba_lcd_480x272**: a test design for the 4.3" 480x272 LCD
   (HT043IBB-16A3047-H4) that exercises this repository's display, input and
@@ -12,8 +11,10 @@ repository provides:
   Gowin IDE projects, build and flash commands, and ROM/SD-card tools.
 - **gbtang_lcd**: Game Boy LCD target with CRC-checked ROM loading over USB
   UART. See [its build and controls](tangnano20k/gbtang_lcd/README.md).
+- **studio_lcd**: native GBA Studio/GBA-engine games with a RISC-V CPU,
+  hardware tiles/sprites and USB loading. See [the Studio flow](tangnano20k/studio_lcd/README.md).
 
-GBA itself needs a Tang 60K-class board and GBATang; see
+The available complete GBA core targets Tang 60K-class boards with GBATang; see
 [docs/BOARD_MATRIX.md](docs/BOARD_MATRIX.md).
 
 ## Quick start
