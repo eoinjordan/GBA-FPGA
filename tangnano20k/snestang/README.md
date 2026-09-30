@@ -60,8 +60,12 @@ python3 scripts/gbafpga.py flash snestang
 ```
 
 Writes `firmware.bin` at `0x500000` and the bitstream at `0x000000`, with
-openFPGALoader or Gowin's `programmer_cli`. Add `--no-firmware` for later
-bitstream-only updates. In the Gowin Programmer GUI: device GW2AR-18C,
+openFPGALoader or Gowin's `programmer_cli`. The bitstream is the newest of
+`build`, the Gowin IDE output (`impl/pnr/`) and `fetch`; the firmware comes
+from `fetch` (the v0.9 source tree does not include a built copy), so run
+`fetch snestang` once even if you build the bitstream yourself. `--dry-run`
+shows what would be written; `--no-firmware` skips the firmware on later
+updates. In the Gowin Programmer GUI: device GW2AR-18C,
 *exFlash Erase, Program thru GAO-Bridge*, bitstream at `0x000000`, firmware at
 `0x500000`.
 

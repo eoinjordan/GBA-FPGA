@@ -54,9 +54,12 @@ python3 scripts/gbafpga.py flash gbtang
 ```
 
 This writes `firmware.bin` to the SPI flash at `0x500000` and the bitstream at
-`0x000000`. It uses openFPGALoader when installed, otherwise Gowin's
-`programmer_cli` (`--tool` chooses). Once the firmware is on the board, use
-`--no-firmware` for bitstream-only updates.
+`0x000000`. The bitstream is the newest of `build`, the Gowin IDE output
+(`impl/pnr/`) and `fetch`; the firmware comes from `fetch` or from the
+bootstrapped checkout (`external/GBTang/OSTang/firmware/firmware.bin`, the same
+file as the release). It uses openFPGALoader when installed, otherwise Gowin's
+`programmer_cli` (`--tool` chooses); `--dry-run` shows what it would do. Once
+the firmware is on the board, use `--no-firmware` for bitstream-only updates.
 
 With the Gowin Programmer GUI instead: device GW2AR-18C, operation
 *exFlash Erase, Program thru GAO-Bridge*; program `gbtang_nano20k.fs` at

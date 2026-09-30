@@ -27,6 +27,10 @@ python3 scripts/gbafpga.py flash gba_lcd_480x272 --sram   # quick test, lost at 
 python3 scripts/gbafpga.py flash gba_lcd_480x272          # SPI flash, survives power-off
 ```
 
+`flash` uses the newest bitstream it finds, whether from `build` or from a
+Gowin IDE *Run All* (`impl/pnr/`), and prints its path; add `--dry-run` to see
+the programmer commands without touching the board.
+
 Gowin Programmer GUI: device GW2AR-18C, *SRAM Program* or
 *exFlash Erase, Program thru GAO-Bridge* with the `.fs` file.
 
@@ -64,7 +68,7 @@ Gowin Programmer GUI: device GW2AR-18C, *SRAM Program* or
 | Picture shimmers or pixels flicker at edges | Data sampled on the wrong DCLK edge: set `LCD_LATCH_RISING` to 0 in `src/gba_lcd_top.sv` |
 | Red and blue bars swapped | Panel's RGB order differs from Sipeed's connector wiring |
 | Picture shifted or rolling | Panel wants different porches: edit the profile at the top of `src/gba_lcd_top.sv` |
-| `fps` not 58 | Wrong PLL settings for the crystal in `src/gowin_rpll/lcd_pll.v` |
+| `fps` not 58 | Wrong rPLL settings for the crystal (`u_rpll` in `src/gba_lcd_top.sv`) |
 
 ## How it works
 
@@ -120,11 +124,10 @@ Gowin IDE build has not been tried.
 |---|---|
 | `gba_lcd_480x272.gprj` | Gowin IDE project; the source list every flow uses |
 | `impl/project_process_config.json` | IDE options: top `gba_lcd_top`, SystemVerilog 2017, MSPI/SSPI pins as GPIO |
-| `src/gba_lcd_top.sv` | Board top level; panel profile and clock-edge setting at the top |
+| `src/gba_lcd_top.sv` | Board top level: rPLL (27 MHz to 9 MHz), panel profile, clock-edge setting |
 | `src/status_reporter.sv` | Once-per-second UART status line |
-| `src/gowin_rpll/lcd_pll.v` | rPLL: 27 MHz to 9 MHz |
 | `src/gba_lcd_480x272.cst` | Pins, from Sipeed's Nano 20K examples |
-| `src/gba_lcd_480x272.sdc` | Clock constraints (nextpnr reads the `create_clock` lines) |
+| `src/gba_lcd_480x272.sdc` | Clock constraints: Gowin reads the file (pixel clock on the `u_rpll/CLKOUT` pin); nextpnr gets the `// nextpnr:` lines |
 | `sim/gba_lcd_top_tb.sv` | End-to-end test: panel model, pixel check, buttons, UART |
 | `sim/rpll_model.v` | Behavioural rPLL for simulation |
 | `../../rtl/` | The reusable modules: timing, mapper, test pattern, buttons, UART, reset |

@@ -12,7 +12,6 @@
         <File path="../../rtl/video/rgb_lcd_timing.sv" type="file.verilog" enable="1"/>
         <File path="../../rtl/video/gba_to_480x272_mapper.sv" type="file.verilog" enable="1"/>
         <File path="../../rtl/video/gba_test_pattern.sv" type="file.verilog" enable="1"/>
-        <File path="src/gowin_rpll/lcd_pll.v" type="file.verilog" enable="1"/>
         <File path="src/status_reporter.sv" type="file.verilog" enable="1"/>
         <File path="src/gba_lcd_top.sv" type="file.verilog" enable="1"/>
         <File path="src/gba_lcd_480x272.cst" type="file.cst" enable="1"/>
