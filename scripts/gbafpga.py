@@ -507,10 +507,12 @@ def _build_open(out_dir: Path) -> Path:
     netlist, routed = out_dir / "synth.json", out_dir / "pnr.json"
     bitstream = out_dir / f"{proj.output_name}.fs"
 
-    # nextpnr reads only create_clock from SDC; Gowin-only commands are dropped here.
+    # The .sdc is written for Gowin (pin names from its netlist). nextpnr sees
+    # yosys names and supports only create_clock, so it gets the "// nextpnr:" lines.
     sdc = out_dir / "nextpnr.sdc"
-    clocks = [line for s in proj.sdc for line in s.read_text(encoding="utf-8").splitlines()
-              if line.strip().startswith("create_clock")]
+    clocks = [line.split("// nextpnr:", 1)[1].strip()
+              for s in proj.sdc for line in s.read_text(encoding="utf-8").splitlines()
+              if line.strip().startswith("// nextpnr:")]
     sdc.write_text("\n".join(clocks) + "\n", encoding="utf-8")
 
     sources = " ".join(f'"{p.as_posix()}"' for p in proj.verilog)

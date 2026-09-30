@@ -10,7 +10,7 @@
 // Exercises the GBA-FPGA display, input and UART blocks on real hardware
 // without a core or a ROM, and reports what it sees over USB serial:
 //
-//   lcd_pll                27 MHz crystal -> 9 MHz DCLK        LED1, "pll=1"
+//   rPLL (u_rpll)          27 MHz crystal -> 9 MHz DCLK        LED1, "pll=1"
 //   rgb_lcd_timing         NV3047 SYNC-DE timing               stable picture
 //   gba_to_480x272_mapper  240x160 frame -> 408x272 + bars     pattern 0/1 geometry
 //   gba_test_pattern       four validation patterns            S1 next, S2 previous
@@ -65,13 +65,59 @@ module gba_lcd_top #(
     // =========================================================================
     // Clocking and resets
     // =========================================================================
+    // rPLL primitive (Gowin UG286), 27 MHz crystal -> 9 MHz pixel clock:
+    //   CLKOUT = FCLKIN * (FBDIV_SEL + 1) / (IDIV_SEL + 1) = 27 * 1 / 3 = 9 MHz
+    //   PFD = 27 / 3 = 9 MHz;  VCO = CLKOUT * ODIV_SEL = 9 * 64 = 576 MHz
+    // 9 MHz is the NV3047 typical DCLK (8-12 MHz allowed). It is instantiated
+    // here, not in a wrapper, so the timing constraint can name its output pin
+    // as u_rpll/CLKOUT (see gba_lcd_480x272.sdc).
     logic clk_pix;
     logic pll_locked;
+    /* verilator lint_off UNUSEDSIGNAL */
+    logic unused_clkoutp;
+    logic unused_clkoutd;
+    logic unused_clkoutd3;
+    /* verilator lint_on UNUSEDSIGNAL */
 
-    lcd_pll u_pll (
-        .clk_in (clk_27m),
-        .clk_out(clk_pix),
-        .locked (pll_locked)
+    rPLL #(
+        .FCLKIN          ("27"),
+        .DYN_IDIV_SEL    ("false"),
+        .IDIV_SEL        (2),          // divide input by 3
+        .DYN_FBDIV_SEL   ("false"),
+        .FBDIV_SEL       (0),          // multiply by 1
+        .DYN_ODIV_SEL    ("false"),
+        .ODIV_SEL        (64),         // VCO / 64 = CLKOUT
+        .PSDA_SEL        ("0000"),
+        .DYN_DA_EN       ("false"),
+        .DUTYDA_SEL      ("1000"),
+        .CLKOUT_FT_DIR   (1'b1),
+        .CLKOUTP_FT_DIR  (1'b1),
+        .CLKOUT_DLY_STEP (0),
+        .CLKOUTP_DLY_STEP(0),
+        .CLKFB_SEL       ("internal"),
+        .CLKOUT_BYPASS   ("false"),
+        .CLKOUTP_BYPASS  ("false"),
+        .CLKOUTD_BYPASS  ("false"),
+        .DYN_SDIV_SEL    (2),
+        .CLKOUTD_SRC     ("CLKOUT"),
+        .CLKOUTD3_SRC    ("CLKOUT"),
+        .DEVICE          ("GW2AR-18C")
+    ) u_rpll (
+        .CLKOUT  (clk_pix),
+        .LOCK    (pll_locked),
+        .CLKOUTP (unused_clkoutp),
+        .CLKOUTD (unused_clkoutd),
+        .CLKOUTD3(unused_clkoutd3),
+        .RESET   (1'b0),
+        .RESET_P (1'b0),
+        .CLKIN   (clk_27m),
+        .CLKFB   (1'b0),
+        .FBDSEL  (6'b000000),
+        .IDSEL   (6'b000000),
+        .ODSEL   (6'b000000),
+        .PSDA    (4'b0000),
+        .DUTYDA  (4'b0000),
+        .FDLY    (4'b0000)
     );
 
     // The crystal domain comes out of reset right after configuration, even
