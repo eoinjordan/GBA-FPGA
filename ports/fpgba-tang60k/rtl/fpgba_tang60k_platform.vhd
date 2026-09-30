@@ -1,3 +1,14 @@
+-- =============================================================================
+-- fpgba_tang60k_platform -- reset sequencing and keypad mapping for FPGBA
+-- =============================================================================
+-- The part of the Tang 60K platform layer that exists so far:
+--   * core_reset stays asserted until the PLL is locked, DDR3 calibration is
+--     done and external reset is released, then RESET_HOLD_CYCLES more clocks;
+--     losing any of them re-asserts it on the next clock edge.
+--   * Active-low button pins become the gba_keys_t record (1 = pressed).
+-- Buttons are assumed to be debounced and synchronised upstream of this block.
+-- =============================================================================
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -31,6 +42,8 @@ entity fpgba_tang60k_platform is
 end entity;
 
 architecture rtl of fpgba_tang60k_platform is
+    -- ---- Helpers ---------------------------------------------------------------
+    -- Bits needed to count to value (ceil(log2(value)), at least 1).
     function clog2(value : positive) return positive is
         variable remaining : natural := value - 1;
         variable result    : positive := 1;
@@ -42,10 +55,12 @@ architecture rtl of fpgba_tang60k_platform is
         return result;
     end function;
 
+    -- ---- Reset hold counter ----------------------------------------------------
     constant RESET_COUNTER_WIDTH : positive := clog2(RESET_HOLD_CYCLES + 1);
     signal reset_counter : unsigned(RESET_COUNTER_WIDTH - 1 downto 0) := (others => '0');
     signal ready         : std_logic := '0';
 
+    -- Pin level to key state: '0' on the pin means pressed.
     function active_low_to_pressed(signal input_n : std_logic) return std_logic is
     begin
         if input_n = '0' then
@@ -55,6 +70,7 @@ architecture rtl of fpgba_tang60k_platform is
     end function;
 
 begin
+    -- ---- Reset sequencing ---------------------------------------------------------
     process (clk_core)
     begin
         if rising_edge(clk_core) then
@@ -74,6 +90,7 @@ begin
     core_reset  <= not ready;
     core_enable <= ready;
 
+    -- ---- Keypad mapping -----------------------------------------------------------
     keys.a      <= active_low_to_pressed(button_a_n);
     keys.b      <= active_low_to_pressed(button_b_n);
     keys.key_select <= active_low_to_pressed(button_select_n);

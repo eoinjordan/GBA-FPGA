@@ -34,11 +34,9 @@ Touchscreen controls are sufficient for demonstration. Experimental BLE controll
 
 Save persistence is difficult because the device's power switch cuts power directly. The emulator cannot rely on a graceful shutdown callback. An explicit save control flushes cartridge RAM to SD and also supports quick save/load.
 
-## Lessons for GBA-FPGA
+## Relevance to GBA-FPGA
 
-1. Select hardware around the hard peripheral constraint, not only CPU or FPGA headline capacity.
-2. Treat display timing, buffering, and memory bandwidth as first-class architecture.
-3. Use an existing mature core when the novelty is in the platform integration.
-4. Make save persistence explicit and power-failure-aware.
-5. Publish the compromises: frame skipping, imperfect audio, incomplete controller compatibility, and end-of-life hardware.
-6. A compelling build is often created by matching an awkward device to a workload whose geometry makes the impossible practical.
+The PaperBoy works because the display strategy was designed around the panel's
+limits and a small frame (160x144). The same applies here: the 480x272 panel
+timing, scaling and frame buffer size decide what the Nano 20K can show, and
+save handling has to cope with power being cut without warning.

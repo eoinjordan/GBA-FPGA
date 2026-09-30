@@ -1,3 +1,11 @@
+-- =============================================================================
+-- fpgba_tang60k_platform_tb -- reset release and key mapping checks
+-- =============================================================================
+-- With RESET_HOLD_CYCLES = 4: reset must stay asserted for the hold time after
+-- all conditions are met, then release; A and Left map to pressed while B stays
+-- released; losing DDR3 calibration must reset the core again.
+-- =============================================================================
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -56,6 +64,7 @@ begin
             keys             => keys
         );
 
+    -- ---- Stimulus and checks -------------------------------------------------------
     stimulus : process
     begin
         wait for 3 * CLK_PERIOD;

@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""Copy an SNES ROM (and optionally a core .bin) to a microSD card for SNESTang.
+
+Refuses ROMs over the Nano 20K budget unless --force, and writes
+snes-handheld-manifest.json describing what was deployed.
+"""
+
 from __future__ import annotations
 
 import argparse

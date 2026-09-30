@@ -1,39 +1,33 @@
 # SNES on the Tang Nano 20K
 
-SNESTang changes the project priority because it provides a practical 16-bit console target on the FPGA already owned.
+SNESTang runs SNES games on the Nano 20K over HDMI. The version pinned here is
+v0.9, the last one whose Nano 20K build keeps its menu on a PicoRV32 inside the
+FPGA; setup is in [tangnano20k/snestang](../tangnano20k/snestang/README.md).
 
-## Preferred software-to-hardware proof
+## From SNES Studio to the board
 
 ```text
-SNES Studio project
-  -> real PVSnesLib build
-  -> .sfc ROM
-  -> emulator validation
-  -> repository ROM validator
-  -> standalone SNESTang
-  -> Tang Nano 20K
+SNES Studio project -> PVSnesLib build -> .sfc -> emulator (bsnes, Mesen-S)
+    -> scripts/validate-snes-rom.py -> SD card -> SNESTang on the Nano 20K
 ```
 
-This is the strongest immediate deliverable: an original game created in SNES Studio running on a GBA-shaped FPGA handheld.
+## ROM size
 
-## ROM budget
-
-The Nano 20K target is treated as accepting only ROM payloads smaller than 3.75 MiB. The repository validator uses a strict limit of 3,932,160 bytes and removes a detected 512-byte copier header when calculating payload size.
+Payloads must be smaller than 3.75 MiB on the Nano 20K. The validator uses
+3,932,160 bytes as a strict limit and ignores a 512-byte copier header when
+measuring.
 
 ## Controls
 
-A two-face-button GBA PCB is insufficient for normal SNES play. The handheld must expose:
+The GBA's two face buttons are not enough for SNES games. A handheld needs the
+D-pad, A, B, X, Y, L, R, Start and Select, plus a menu button where the core
+supports one (`hardware/snes_button_map.csv`). SNESTang reads SNES pads and
+DualShock 2 pads, so a button board built like a SNES pad needs no FPGA changes.
 
-- D-pad;
-- A, B, X and Y;
-- L and R;
-- Start and Select;
-- a dedicated Menu/OSD button where supported.
+## Display and storage
 
-## Display
-
-Use SNESTang's existing HDMI path for the first prototype. The ordered 480x272 panel remains a separate bring-up project until its exact controller, FPC pinout, I/O voltage, pixel timing and backlight specification are known.
-
-## Storage
-
-Use microSD first. A physical SNES cartridge connector is too large and electrically complex for the initial GBA-shaped handheld, and it adds 5 V compatibility, mapping, enhancement-chip and save-memory problems that do not improve the first demonstration.
+The first prototype uses SNESTang's HDMI output. The 480x272 panel works (see
+`gba_lcd_480x272`), but SNESTang would need a frame buffer and scaler to drive
+it. Games load from microSD; a physical SNES cartridge slot would add 5 V
+interfacing, mapping, enhancement-chip and save-memory work for no gain in a
+first prototype.

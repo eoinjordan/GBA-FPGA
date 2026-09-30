@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""Check an SNES ROM against the SNESTang Tang Nano 20K limits (see tools/snes_rom.py).
+
+Exit status: 0 compatible, 2 too large, 1 unreadable.
+"""
+
 from __future__ import annotations
 
 import argparse

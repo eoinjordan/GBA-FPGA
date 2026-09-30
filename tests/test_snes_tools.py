@@ -1,3 +1,5 @@
+"""Tests for the SNES ROM inspection used by the SNESTang SD tooling."""
+
 from __future__ import annotations
 
 import tempfile
