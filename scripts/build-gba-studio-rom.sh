@@ -9,7 +9,8 @@ fi
 command -v node >/dev/null 2>&1 || { echo "ERROR: Node.js 20 or newer is required" >&2; exit 1; }
 command -v npm >/dev/null 2>&1 || { echo "ERROR: npm is required" >&2; exit 1; }
 
-project="$(realpath "$1")"
+# Absolute path without realpath (missing on older macOS).
+project="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 studio="$repo_root/external/GBA-Studio"
 

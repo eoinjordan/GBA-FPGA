@@ -1,10 +1,70 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "projects": [
     {
-      "name": "FPGBA",
-      "url": "https://github.com/Kitrinx/FPGBA.git",
-      "path": "external/FPGBA"
+      "name": "GBTang",
+      "url": "https://github.com/fjpolo/GBTang.git",
+      "path": "external/GBTang",
+      "ref": "v1.0.0",
+      "commit": "90005dceeb1381c207d8d140917f6afd305aeecc",
+      "nano20k": {
+        "system": "Game Boy (DMG)",
+        "gowin_tcl": "build.tcl",
+        "gowin_args": ["gbtang_nano20k"],
+        "gowin_version": "1.9.9",
+        "gowin_output": "impl/pnr/gbtang_nano20k.fs",
+        "bitstream": "gbtang_nano20k.fs",
+        "firmware": "firmware.bin",
+        "firmware_offset": "0x500000",
+        "release": {
+          "tag": "v1.0.0",
+          "assets": [
+            {
+              "name": "gbtang_nano20k.fs",
+              "size": 7264141,
+              "sha256": "36d128f4f747b5f6b1f263c5bdb5ea1731a0e57887fa936396583dedd4e2af02"
+            },
+            {
+              "name": "firmware.bin",
+              "size": 102680,
+              "sha256": "b231ec7ce5d8c253ab61493558dbfed3a324e47cd54ccca254bce9c734ac8fe1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "SNESTang",
+      "url": "https://github.com/nand2mario/snestang.git",
+      "path": "external/snestang",
+      "ref": "v0.9",
+      "commit": "58bb70aba31eb3055aceba910dc1d5c407da853b",
+      "nano20k": {
+        "system": "SNES",
+        "gowin_tcl": "build.tcl",
+        "gowin_args": ["nano20k"],
+        "gowin_version": "1.9.10.03",
+        "gowin_output": "impl/pnr/snestang_nano20k.fs",
+        "bitstream": "snestang_nano20k.fs",
+        "firmware": "firmware.bin",
+        "firmware_offset": "0x500000",
+        "release": {
+          "tag": "v0.9",
+          "assets": [
+            {
+              "name": "snestang-0.9.zip",
+              "size": 12179662,
+              "sha256": null,
+              "extract": ["snestang_nano20k.fs", "firmware.bin"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "NESTang",
+      "url": "https://github.com/nand2mario/nestang.git",
+      "path": "external/nestang"
     },
     {
       "name": "GBATang",
@@ -12,9 +72,9 @@
       "path": "external/gbatang"
     },
     {
-      "name": "GBTang",
-      "url": "https://github.com/fjpolo/GBTang.git",
-      "path": "external/GBTang"
+      "name": "FPGBA",
+      "url": "https://github.com/Kitrinx/FPGBA.git",
+      "path": "external/FPGBA"
     },
     {
       "name": "GBA-Studio",
@@ -25,6 +85,11 @@
       "name": "GBA-engine",
       "url": "https://github.com/eoinjordan/GBA-engine.git",
       "path": "external/GBA-engine"
+    },
+    {
+      "name": "SNES-Studio",
+      "url": "https://github.com/eoinjordan/snes-studio.git",
+      "path": "external/snes-studio"
     },
     {
       "name": "gba-cart-read",
@@ -40,21 +105,6 @@
       "name": "paperboy",
       "url": "https://gitlab.com/zephray/paperboy.git",
       "path": "external/paperboy"
-    },
-    {
-      "name": "SNESTang",
-      "url": "https://github.com/nand2mario/snestang.git",
-      "path": "external/snestang"
-    },
-    {
-      "name": "NESTang",
-      "url": "https://github.com/nand2mario/nestang.git",
-      "path": "external/nestang"
-    },
-    {
-      "name": "SNES-Studio",
-      "url": "https://github.com/eoinjordan/snes-studio.git",
-      "path": "external/snes-studio"
     }
   ]
 }

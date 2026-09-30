@@ -1,55 +1,50 @@
-SHELL := /bin/bash
-BUILD_DIR := build/tests
-GHDL_DIR := build/ghdl
+# GBA-FPGA top-level targets.
+#
+# Every target runs scripts/gbafpga.py, which works the same without make:
+#   python3 scripts/gbafpga.py <command>        (Linux, macOS)
+#   .\scripts\gbafpga.ps1 <command>             (Windows PowerShell)
+# Written for GNU make 3.81 (the version macOS ships).
 
-.PHONY: all test test-python test-cart test-buttons test-video test-video-mapper test-lcd test-vhdl clean verify
+PYTHON  ?= $(shell command -v python3 2>/dev/null || command -v python 2>/dev/null)
+GBAFPGA := $(PYTHON) scripts/gbafpga.py
 
+.PHONY: all test lint doctor bootstrap tangnano20k gowin load flash gbtang snestang clean
+
+# ---- Checks -----------------------------------------------------------------
 all: test
 
-test: verify test-python test-cart test-buttons test-video test-vhdl
+# REQUIRE_GHDL=1 turns the skipped VHDL test into a failure (CI sets it).
+test:
+	$(GBAFPGA) test $(if $(REQUIRE_GHDL),--require-ghdl,)
 
-test-python:
-	python3 -m unittest discover -s tests -v
+lint:
+	$(GBAFPGA) lint
 
-verify:
-	@command -v iverilog >/dev/null 2>&1 || { echo "ERROR: iverilog is required"; exit 1; }
-	@command -v vvp >/dev/null 2>&1 || { echo "ERROR: vvp is required"; exit 1; }
-	@command -v ghdl >/dev/null 2>&1 || { echo "ERROR: ghdl is required"; exit 1; }
-	@mkdir -p $(BUILD_DIR) $(GHDL_DIR)
+doctor:
+	$(GBAFPGA) doctor
 
-test-cart:
-	iverilog -g2012 -Wall -s gba_cart_rom_reader_tb -o $(BUILD_DIR)/gba_cart_reader \
-		rtl/cart/gba_cart_rom_reader.sv \
-		rtl/cart/gba_cart_rom_reader_tb.sv
-	vvp $(BUILD_DIR)/gba_cart_reader
+bootstrap:
+	$(GBAFPGA) bootstrap
 
-test-buttons:
-	iverilog -g2012 -Wall -s gba_buttons_tb -o $(BUILD_DIR)/gba_buttons \
-		rtl/input/button_debouncer.sv \
-		rtl/input/gba_buttons.sv \
-		rtl/input/gba_buttons_tb.sv
-	vvp $(BUILD_DIR)/gba_buttons
+# ---- Tang Nano 20K: GBA-FPGA LCD validation design ---------------------------
+tangnano20k:
+	$(GBAFPGA) build gba_lcd_480x272
 
-test-video: test-video-mapper test-lcd
+gowin:
+	$(GBAFPGA) build gba_lcd_480x272 --flow gowin
 
-test-video-mapper:
-	iverilog -g2012 -Wall -s gba_to_480x272_mapper_tb -o $(BUILD_DIR)/gba_video_mapper \
-		rtl/video/gba_to_480x272_mapper.sv \
-		rtl/video/gba_to_480x272_mapper_tb.sv
-	vvp $(BUILD_DIR)/gba_video_mapper
+load:
+	$(GBAFPGA) flash gba_lcd_480x272 --sram
 
-test-lcd:
-	iverilog -g2012 -Wall -s rgb_lcd_timing_tb -o $(BUILD_DIR)/rgb_lcd_timing \
-		rtl/video/rgb_lcd_timing.sv \
-		rtl/video/rgb_lcd_timing_tb.sv
-	vvp $(BUILD_DIR)/rgb_lcd_timing
+flash:
+	$(GBAFPGA) flash gba_lcd_480x272
 
-test-vhdl:
-	cd $(GHDL_DIR) && ghdl -a --std=08 ../../ports/fpgba-tang60k/rtl/fpgba_platform_pkg.vhd
-	cd $(GHDL_DIR) && ghdl -a --std=08 ../../ports/fpgba-tang60k/rtl/fpgba_tang60k_platform.vhd
-	cd $(GHDL_DIR) && ghdl -a --std=08 ../../ports/fpgba-tang60k/sim/fpgba_tang60k_platform_tb.vhd
-	cd $(GHDL_DIR) && ghdl -e --std=08 fpgba_tang60k_platform_tb
-	cd $(GHDL_DIR) && ghdl -r --std=08 fpgba_tang60k_platform_tb --assert-level=error --stop-time=200ns
+# ---- Tang Nano 20K: upstream cores (Gowin EDA required to build) ---------------
+gbtang:
+	$(GBAFPGA) build gbtang
+
+snestang:
+	$(GBAFPGA) build snestang
 
 clean:
 	rm -rf build

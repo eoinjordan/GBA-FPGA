@@ -1,0 +1,21 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW2AR-18C" pn="GW2AR-LV18QN88C8/I7">gw2ar18c-000</Device>
+    <FileList>
+        <File path="../../rtl/common/reset_sync.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/common/uart_tx.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/button_debouncer.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/input/gba_buttons.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/video/rgb_lcd_timing.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/video/gba_to_480x272_mapper.sv" type="file.verilog" enable="1"/>
+        <File path="../../rtl/video/gba_test_pattern.sv" type="file.verilog" enable="1"/>
+        <File path="src/gowin_rpll/lcd_pll.v" type="file.verilog" enable="1"/>
+        <File path="src/status_reporter.sv" type="file.verilog" enable="1"/>
+        <File path="src/gba_lcd_top.sv" type="file.verilog" enable="1"/>
+        <File path="src/gba_lcd_480x272.cst" type="file.cst" enable="1"/>
+        <File path="src/gba_lcd_480x272.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

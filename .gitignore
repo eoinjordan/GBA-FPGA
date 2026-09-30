@@ -1,6 +1,16 @@
+# Build output (tests, bitstreams, downloaded releases)
 /build/
+
+# Upstream checkouts made by scripts/bootstrap
 /external/*
 !/external/.gitkeep
+
+# Gowin IDE output: keep only each project's process configuration
+tangnano20k/*/impl/*
+!tangnano20k/*/impl/project_process_config.json
+*.gprj.user
+
+# Bitstreams, firmware and game images are never committed
 *.fs
 *.bin
 *.bit
@@ -9,14 +19,24 @@
 *.gba
 *.gb
 *.gbc
+*.sfc
+*.smc
 *.sav
 *.srm
+
+# Simulation and tool logs
 *.vcd
 *.fst
 *.jou
 *.log
 *.tmp
+
+# Local drafts (kept out of the repository)
+/blog/
+
+# Local tooling
 __pycache__/
+.flow/
 .DS_Store
 .vscode/
 .idea/
