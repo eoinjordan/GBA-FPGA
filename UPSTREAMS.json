@@ -15,6 +15,7 @@
         "gowin_output": "impl/pnr/gbtang_nano20k.fs",
         "bitstream": "gbtang_nano20k.fs",
         "firmware": "firmware.bin",
+        "firmware_in_checkout": "OSTang/firmware/firmware.bin",
         "firmware_offset": "0x500000",
         "release": {
           "tag": "v1.0.0",

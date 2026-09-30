@@ -48,7 +48,7 @@ The Tang Nano 20K projects, board notes and pin tables are in
 | `lint` | Verilator `-Wall` lint of the synthesizable RTL |
 | `build PROJECT [--flow open\|gowin]` | Builds a Tang Nano 20K bitstream into `build/tangnano20k/PROJECT/` |
 | `fetch gbtang\|snestang` | Downloads the pinned release bitstream and menu firmware, with size/checksum checks |
-| `flash PROJECT [--sram] [--no-firmware] [--tool ...]` | Programs the board with openFPGALoader or Gowin's programmer |
+| `flash PROJECT [--sram] [--no-firmware] [--dry-run]` | Programs the board with openFPGALoader or Gowin's programmer, using the newest bitstream from `build`, a Gowin IDE build or `fetch`; `--dry-run` shows the files and commands |
 | `ide-project gbtang\|snestang` | Regenerates the Gowin IDE project from the upstream `build.tcl` |
 
 Projects: `gba_lcd_480x272`, `gbtang`, `snestang`.

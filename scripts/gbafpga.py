@@ -49,6 +49,7 @@ EXE = ".exe" if IS_WINDOWS else ""
 # ============================================================================
 
 def fail(message: str) -> "NoReturn":  # type: ignore[name-defined]
+    sys.stdout.flush()                    # keep the error after any progress output
     print(f"error: {message}", file=sys.stderr)
     sys.exit(1)
 
@@ -666,48 +667,101 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 # flash
 # ============================================================================
 
-def _default_files(project: str) -> tuple:
+def _bitstream_candidates(project: str) -> List[Path]:
+    """Every place a build route leaves the bitstream."""
     out_dir = project_build_dir(project)
     if project == LOCAL_PROJECT:
-        return out_dir / f"{LOCAL_PROJECT}.fs", None
-    meta = upstream(project)["nano20k"]
-    built, released = out_dir / meta["bitstream"], out_dir / "release" / meta["bitstream"]
-    return (built if built.is_file() else released), out_dir / "release" / meta["firmware"]
+        name = read_gowin_project(LOCAL_DIR).output_name + ".fs"
+        return [out_dir / name,                               # gbafpga.py build (open or gowin flow)
+                LOCAL_DIR / "impl" / "pnr" / name]            # Gowin IDE: Run All on the .gprj
+    pin = upstream(project)
+    meta = pin["nano20k"]
+    return [out_dir / meta["bitstream"],                                          # gbafpga.py build
+            REPO / "tangnano20k" / project / "impl" / "pnr" / meta["bitstream"],  # Gowin IDE project here
+            REPO / pin["path"] / meta["gowin_output"],                            # upstream scripts run by hand
+            out_dir / "release" / meta["bitstream"]]                              # gbafpga.py fetch
+
+
+def _firmware_candidates(project: str) -> List[Path]:
+    if project == LOCAL_PROJECT:
+        return []
+    pin = upstream(project)
+    meta = pin["nano20k"]
+    candidates = [project_build_dir(project) / "release" / meta["firmware"]]  # gbafpga.py fetch
+    if meta.get("firmware_in_checkout"):                                       # shipped in the upstream tree
+        candidates.append(REPO / pin["path"] / meta["firmware_in_checkout"])
+    return candidates
+
+
+def _newest(paths: List[Path]) -> Optional[Path]:
+    existing = [p for p in paths if p.is_file()]
+    return max(existing, key=lambda p: p.stat().st_mtime) if existing else None
+
+
+def _not_found(what: str, searched: List[Path], hints: List[str]) -> "NoReturn":  # type: ignore[name-defined]
+    lines = [f"no {what} found. Looked in:"] + [f"    {p}" for p in searched] + hints
+    fail("\n".join(lines))
 
 
 def cmd_flash(args: argparse.Namespace) -> int:
-    bitstream, firmware = _default_files(args.project)
-    bitstream = Path(args.bitstream) if args.bitstream else bitstream
-    firmware = Path(args.firmware) if args.firmware else firmware
-    if not bitstream.is_file():
-        fail(f"{bitstream} not found; run 'build' (or 'fetch' for gbtang/snestang) first")
-    with_firmware = firmware is not None and not args.no_firmware
-    if with_firmware and not firmware.is_file():
-        fail(f"{firmware} not found; run 'fetch {args.project}' or pass --firmware PATH, "
-             "or --no-firmware if the board already has it")
-    offset = upstream(args.project)["nano20k"]["firmware_offset"] if with_firmware else None
+    # ---- Pick the files: explicit paths win, otherwise the newest from any route.
+    if args.bitstream:
+        bitstream = Path(args.bitstream)
+        if not bitstream.is_file():
+            fail(f"--bitstream {bitstream} does not exist")
+    else:
+        searched = _bitstream_candidates(args.project)
+        bitstream = _newest(searched) or _not_found("bitstream", searched, [
+            f"  Build it:  python3 scripts/gbafpga.py build {args.project}",
+            "  or run Run All on the project's .gprj in the Gowin IDE",
+            "  or pass --bitstream PATH" + ("" if args.project == LOCAL_PROJECT
+                                            else f", or download it: python3 scripts/gbafpga.py fetch {args.project}")])
 
+    firmware: Optional[Path] = None
+    if args.project != LOCAL_PROJECT and not args.no_firmware:
+        if args.firmware:
+            firmware = Path(args.firmware)
+            if not firmware.is_file():
+                fail(f"--firmware {firmware} does not exist")
+        else:
+            searched = _firmware_candidates(args.project)
+            firmware = _newest(searched) or _not_found("menu firmware (firmware.bin)", searched, [
+                f"  Download it:  python3 scripts/gbafpga.py fetch {args.project}",
+                "  or pass --firmware PATH, or --no-firmware if the board already has it"])
+    offset = upstream(args.project)["nano20k"]["firmware_offset"] if firmware else None
+    print(f"  bitstream: {bitstream}")
+    if firmware:
+        print(f"  firmware:  {firmware} -> {offset}")
+
+    # ---- Build the programmer commands: firmware first, then the bitstream.
     flasher = args.tool
     if flasher == "auto":
         flasher = "openfpgaloader" if tool("openFPGALoader") else "gowin"
     print(f"== flash {args.project} via {flasher} ({'SRAM, lost at power-off' if args.sram else 'SPI flash'})")
+    commands: List[list] = []
     if flasher == "openfpgaloader":
-        loader = tool("openFPGALoader") or fail("openFPGALoader not found")
-        if with_firmware:
-            run([loader, "-b", BOARD, "--external-flash", "-o", offset, firmware])
-        run([loader, "-b", BOARD] + ([] if args.sram else ["-f"]) + [bitstream])
+        loader = tool("openFPGALoader") or fail("openFPGALoader not found (run 'doctor'); or use --tool gowin")
+        if firmware:
+            commands.append([loader, "-b", BOARD, "--external-flash", "-o", offset, firmware])
+        commands.append([loader, "-b", BOARD] + ([] if args.sram else ["-f"]) + [bitstream])
     else:
         install = pick_gowin(args.gowin, None)
         if not install or not install.programmer_cli:
             fail("no flash tool: install openFPGALoader, or Gowin EDA with its Programmer")
         base = [install.programmer_cli, "--device", "GW2AR-18C", "--cable-index", str(args.cable_index)]
-        if with_firmware:
-            run(base + ["--run", "36", "--spiaddr", offset, "--fsFile", firmware])
+        if firmware:
+            commands.append(base + ["--run", "36", "--spiaddr", offset, "--fsFile", firmware])
         if args.sram:
-            run(base + ["--run", "2", "--fsFile", bitstream])
+            commands.append(base + ["--run", "2", "--fsFile", bitstream])
         else:
-            run(base + ["--run", "36", "--spiaddr", "0x000000", "--fsFile", bitstream])
-    print("done")
+            commands.append(base + ["--run", "36", "--spiaddr", "0x000000", "--fsFile", bitstream])
+
+    for command in commands:
+        if args.dry_run:
+            print("  would run: " + " ".join(str(c) for c in command))
+        else:
+            run(command)
+    print("dry run, nothing written" if args.dry_run else "done")
     return 0
 
 
@@ -876,6 +930,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     flash.add_argument("--gowin", help="Gowin EDA install folder, for --tool gowin")
     flash.add_argument("--cable-index", type=int, default=4,
                        help="Gowin programmer cable index (4 = Tang Nano 20K onboard debugger)")
+    flash.add_argument("--dry-run", action="store_true",
+                       help="show the files and programmer commands without writing anything")
     flash.set_defaults(func=cmd_flash)
 
     ide = commands.add_parser("ide-project",

@@ -27,6 +27,10 @@ python3 scripts/gbafpga.py flash gba_lcd_480x272 --sram   # quick test, lost at 
 python3 scripts/gbafpga.py flash gba_lcd_480x272          # SPI flash, survives power-off
 ```
 
+`flash` uses the newest bitstream it finds, whether from `build` or from a
+Gowin IDE *Run All* (`impl/pnr/`), and prints its path; add `--dry-run` to see
+the programmer commands without touching the board.
+
 Gowin Programmer GUI: device GW2AR-18C, *SRAM Program* or
 *exFlash Erase, Program thru GAO-Bridge* with the `.fs` file.
 
