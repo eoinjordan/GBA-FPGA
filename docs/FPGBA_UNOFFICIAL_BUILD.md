@@ -1,8 +1,8 @@
 # FPGBA unofficial Tang build
 
-## Meaning of “unofficial build”
+## What "unofficial build" means here
 
-This repository provides an unofficial **port workbench**, not a prebuilt or verified Tang bitstream.
+A port workbench, not a prebuilt or verified Tang bitstream.
 
 Upstream FPGBA contains the VHDL core, a ModelSim compilation order, BIOS-generation tooling, and a framebuffer module. Its published target list identifies the DE2-115 as complete and the MiSTer/DE10 path as work in progress. It does not provide a Gowin project for Tang boards.
 
@@ -16,7 +16,7 @@ The Tang Mega 60K has enough headline capacity to begin a credible port:
 - multiple PLLs;
 - RGB, HDMI, SD, audio, and expansion interfaces on suitable carrier boards.
 
-This does not prove fit or timing closure. It only removes the immediate resource contradiction present on the Nano 20K.
+That does not prove the core fits or meets timing; it only removes the resource shortfall of the Nano 20K.
 
 ## Porting milestones
 
@@ -75,7 +75,7 @@ This does not prove fit or timing closure. It only removes the immediate resourc
 
 ## Completion criteria
 
-The port should not be marked “working” until all of the following exist:
+The port is not "working" until all of these exist:
 
 - a reproducible `.fs` build;
 - no unconstrained clocks or I/O;

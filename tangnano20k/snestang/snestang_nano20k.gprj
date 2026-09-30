@@ -1,0 +1,78 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW2AR-18C" pn="GW2AR-LV18QN88C8/I7">gw2ar18c-000</Device>
+    <FileList>
+        <File path="../../external/snestang/src/nano20k/config.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/snes2hdmi_nano.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/nano20k/snestang.cst" type="file.cst" enable="1"/>
+        <File path="../../external/snestang/src/nano20k/gowin_pll_hdmi.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/nano20k/gowin_pll_snes.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/nano20k/sdram_nano.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/ALU.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/AddSubBCD.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/AddrGen.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/BCDAdder.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/P65C816.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/adder4.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/bit_adder.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/common.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/65C816/mcode.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/CEGen.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/chip/DSP/DSP_LHRomMap.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/chip/DSP/DSPn.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/chip/DSP/OBC1.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/chip/DSP/SRTC.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/chip/dsp/dsp_data_ram.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/cpu.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/dsp.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/dual_clk_fifo.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/dualshock_controller.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/gowin_dpb_cgram.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/gowin_dpb_hoam.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/gowin_dpb_oam.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/audio_clock_regeneration_packet.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/audio_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/audio_sample_packet.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/auxiliary_video_information_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/hdmi.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/packet_assembler.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/packet_picker.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/serializer.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/source_product_description_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/hdmi2/tmds_channel.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/gowin_dpb_menu.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/iosys.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/picorv32.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/simplespimaster.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/simpleuart.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/spi_master.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/spiflash.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/iosys/textdisp.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/main.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/ppu.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/ppucgram.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/ppuhoam.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/ppuoam.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/smc_parser.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/smp.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/snes.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/controller_adapter.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/controller_ds2.sv" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/controller_snes.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/snestang_top.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/_spc700_package.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/addrgen.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/addsub.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/alu.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/bcdadj.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/mcode.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/muldiv.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/spc700/spc700.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/swram.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/uart_tx_V2.v" type="file.verilog" enable="1"/>
+        <File path="../../external/snestang/src/snestang.sdc" type="file.sdc" enable="1"/>
+    </FileList>
+</Project>

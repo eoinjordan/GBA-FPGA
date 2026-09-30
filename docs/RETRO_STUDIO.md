@@ -1,12 +1,12 @@
 # Retro Studio relationship
 
-Keep SNES Studio and GBA Studio as separate working editor repositories while defining a shared intermediate representation for future reuse.
+SNES Studio and GBA Studio stay separate editors for now; a shared project model can come later.
 
 ```text
 Retro Studio project model
   |-- SNES exporter -> PVSnesLib -> .sfc -> SNESTang
   |-- GBA exporter  -> GBA Engine/devkitARM -> .gba -> GBATang 60K
-  `-- GB/GBC exporter -> GBDK/GBVM -> .gb/.gbc -> GBTang Nano 20K
+  `-- GB exporter   -> GBDK/GBVM -> .gb -> GBTang on the Nano 20K
 ```
 
-Do not merge the editors before import/export parity and regression tests exist. The first shared features should be target capability reporting, ROM budgets, deterministic asset manifests and FPGA deployment profiles.
+Merging the editors should wait until import/export matches and regression tests exist. Useful things to share first: per-target capabilities, ROM budgets (the Nano 20K limits are in `tools/snes_rom.py` and `tools/gb_rom.py`), asset manifests and deployment profiles.

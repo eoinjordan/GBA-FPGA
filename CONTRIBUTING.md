@@ -15,9 +15,18 @@ A pull request claiming a new FPGA target works should include:
 7. Photographs or captured video of the generated bitstream running.
 8. Known failures and unsupported peripherals.
 
+## Checks before a pull request
+
+```bash
+python3 scripts/gbafpga.py test
+python3 scripts/gbafpga.py lint
+python3 scripts/gbafpga.py build gba_lcd_480x272
+```
+
 ## Code requirements
 
-- Add or update a self-checking testbench for RTL changes.
+- Add or update a self-checking testbench for RTL changes, and add it to the list in `scripts/gbafpga.py`.
+- Keep RTL clean under Verilator `-Wall`; give each file a header and section comments.
 - Do not add BIOS images, commercial ROMs, or copyrighted assets.
 - Keep platform-specific logic outside the reusable cartridge, input, and video modules.
 - Use explicit clock-domain crossings.

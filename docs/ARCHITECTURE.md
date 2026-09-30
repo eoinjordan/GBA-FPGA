@@ -1,61 +1,73 @@
 # Architecture
 
-## Product architecture
+## Software to hardware
 
 ```text
 GBA Studio project
       |
       v
 GBA Engine + generated assets --devkitARM--> game.gba
-                                              |
-                       +----------------------+-------------------+
-                       |                                          |
-                       v                                          v
-          GBATang on Tang 60K                         Real GBA / flash cart
-                       |
-          +------------+-------------+
-          |            |             |
-          v            v             v
-       buttons       display       audio
-          |
-          +---- optional cartridge-dump/load bridge ----+
-                                                         |
-                                                         v
-                                                GBA cartridge slot
+                                               |
+                        +----------------------+-------------------+
+                        |                                          |
+                        v                                          v
+           GBATang on a Tang 60K board                  real GBA / flash cart
+                        |
+           +------------+-------------+
+           |            |             |
+           v            v             v
+        buttons      display        audio
+           |
+           +---- optional cartridge dump/load bridge ----+
+                                                          |
+                                                          v
+                                                 GBA cartridge slot
 ```
 
 ## Two FPGA tracks
 
-### Working track
+GBATang already provides the GBA CPU, memory system, graphics, audio, SD
+loader and Tang 60K board projects; it is the route to a playable handheld.
 
-GBATang already supplies the GBA CPU, memory system, graphics, audio, SD loader, and Tang 60K board projects. This is the route for a playable handheld.
-
-### Research track
-
-FPGBA supplies a VHDL GBA core and simulation-oriented source tree. Its board-independent core must be wrapped with:
+FPGBA is a VHDL GBA core with a simulation-oriented source tree. Using it on a
+Tang board means wrapping the core with:
 
 - Gowin clock generation and reset sequencing;
 - a DDR3 or SDRAM controller;
-- game ROM and save-memory arbitration;
+- ROM and save-memory arbitration;
 - a frame buffer or direct scan-out bridge;
 - RGB LCD or HDMI timing;
-- audio sample output;
+- audio output;
 - controller input;
 - a menu and storage loader;
-- vendor memory primitive substitutions where inference is insufficient.
+- vendor memory primitives where inference falls short.
 
-The `ports/fpgba-tang60k` directory defines this platform boundary. It intentionally does not claim completion.
+`ports/fpgba-tang60k` defines that boundary. It is a scaffold, not a working
+port.
 
-## Cartridge architecture
+## Reusable RTL in this repository
 
-The GBA cartridge bus multiplexes the lower address and 16-bit data bus. A direct reader needs 24 address bits, 16 multiplexed data/address signals, and control signals. This is expensive in GPIO when a raw RGB panel is also connected.
+| Module | Role |
+|---|---|
+| `rtl/video/rgb_lcd_timing.sv` | Parallel-RGB panel timing, registered outputs |
+| `rtl/video/gba_to_480x272_mapper.sv` | Panel pixel to GBA pixel, 10/17 scale |
+| `rtl/video/gba_test_pattern.sv` | 240x160 test image for display bring-up |
+| `rtl/input/gba_buttons.sv` | Button synchronising and debouncing |
+| `rtl/common/uart_tx.sv`, `reset_sync.sv` | Serial output, reset synchroniser |
+| `rtl/cart/gba_cart_rom_reader.sv` | ROM-only Game Pak reader |
 
-The recommended first implementation is:
+## Cartridge
+
+The GBA cartridge bus multiplexes the low address with 16-bit data: a direct
+reader needs 24 address bits, 16 of them shared with data, plus control
+signals. That is a lot of GPIO next to a raw RGB panel, so the first
+implementation should be:
 
 ```text
 Cartridge slot <-> RP2350/PGA2350 <-> USB/SPI/SD file <-> FPGA loader
 ```
 
-This allows ROM dumping, save backup, and electrical validation to be separated from the real-time FPGA core.
-
-The included SystemVerilog reader is ROM-only. It is suitable for controlled bring-up but does not implement EEPROM, SRAM, Flash, GPIO-equipped cartridges, or writeback.
+This keeps ROM dumping, save backup and electrical testing away from the
+real-time FPGA core. The SystemVerilog reader here is ROM-only and suits
+controlled bring-up; it has no EEPROM, SRAM, Flash, GPIO-cartridge or
+write-back support. See [CARTRIDGE_READER.md](CARTRIDGE_READER.md).

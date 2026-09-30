@@ -1,123 +1,122 @@
 # GBA-FPGA
 
-A hardware and software integration workbench for a **GBA-shaped FPGA handheld**. The project now covers the practical systems available across the Tang board family rather than pretending that every core fits the Tang Nano 20K.
+FPGA work towards a GBA-shaped handheld on Sipeed Tang boards.
 
-```text
-Tang Nano 20K
-  |-- GBTang   -> Game Boy / Game Boy Color
-  `-- SNESTang -> SNES homebrew below the Nano ROM-size limit
+A Game Boy Advance core does not fit the Tang Nano 20K, so on that board this
+repository provides:
 
-Tang 60K class
-  `-- GBATang  -> Game Boy Advance
-```
+- **gba_lcd_480x272**: a test design for the 4.3" 480x272 LCD
+  (HT043IBB-16A3047-H4) that exercises this repository's display, input and
+  UART RTL, with a checklist for the board;
+- **GBTang** (Game Boy) and **SNESTang** (SNES): pinned upstream versions with
+  Gowin IDE projects, build and flash commands, and ROM/SD-card tools.
 
-The companion game-tool workflow is:
+GBA itself needs a Tang 60K-class board and GBATang; see
+[docs/BOARD_MATRIX.md](docs/BOARD_MATRIX.md).
 
-```text
-SNES Studio -> PVSnesLib -> .sfc -> SNESTang
-GBA Studio  -> GBA Engine/devkitARM -> .gba -> GBATang
-```
+## Quick start
 
-## Best-value path
-
-The highest-value immediate milestone is an original SNES Studio game running on SNESTang using the Tang Nano 20K already owned. In parallel, GBA Studio should produce a known-good `.gba` in mGBA so that a future 60K board purchase has a validated software target.
-
-## Hardware decision
-
-| Target | Recommended use | Status |
-|---|---|---|
-| Tang Nano 20K + SNESTang | GBA-shaped SNES handheld | Practical; ROM payload must be smaller than 3.75 MiB |
-| Tang Nano 20K + GBTang | GB/GBC handheld | Practical |
-| Tang Mega/Console 60K + GBATang | GBA handheld | Practical GBA path |
-| FPGBA on Tang 60K | Research port | Integration scaffold only |
-| FPGBA on Tang Nano 20K | Full GBA implementation | Rejected as a best-value route |
-
-## Included
-
-- SNESTang Nano 20K ROM inspection, budget validation and SD deployment scripts.
-- GBTang and GBATang integration documentation.
-- A synthesizable ROM-only GBA cartridge reader and self-checking testbench.
-- 480x272 timing/mapping experiments that remain blocked on the exact panel datasheet.
-- Button debounce and active-low input mapping.
-- Four-face-button SNES control specification.
-- FPGBA Tang 60K platform scaffold.
-- Linux and Windows scripts for upstream checkout, GBA Studio builds and SD preparation.
-- CI tests and repository checks that reject ROM/BIOS artifacts.
-
-## SNES quick start
-
-Validate a homebrew ROM:
+Install the tools for your OS ([docs/TOOLCHAIN.md](docs/TOOLCHAIN.md)), then
+from the repository root:
 
 ```bash
-python3 scripts/validate-snes-rom.py build/my-game.sfc
+python3 scripts/gbafpga.py doctor                        # what is installed, what this machine can do
+python3 scripts/gbafpga.py test                          # all testbenches and Python tests
+
+python3 scripts/gbafpga.py build gba_lcd_480x272         # LCD test design
+python3 scripts/gbafpga.py flash gba_lcd_480x272 --sram
+
+python3 scripts/gbafpga.py fetch gbtang                  # Game Boy: release bitstream + firmware
+python3 scripts/gbafpga.py flash gbtang
+python3 scripts/prepare-gbtang-sd.py game.gb /path/to/sdcard
 ```
 
-Prepare an SD card:
+On Windows, run `.\scripts\gbafpga.ps1` wherever this README says
+`python3 scripts/gbafpga.py`. `make test`, `make lint`, `make tangnano20k` and
+`make flash` do the same where make is installed.
 
-```bash
-python3 scripts/prepare-snestang-sd.py build/my-game.sfc /media/$USER/SNESTANG_SD
-```
+The Tang Nano 20K projects, board notes and pin tables are in
+[tangnano20k/](tangnano20k/README.md).
 
-Optionally copy a standalone core binary:
+## Commands
 
-```bash
-python3 scripts/prepare-snestang-sd.py build/my-game.sfc /media/$USER/SNESTANG_SD \
-  --core /path/to/snestang-nano20k.bin
-```
+| Command | What it does |
+|---|---|
+| `doctor` | Lists tools found (OSS CAD Suite, Gowin EDA, programmers) and what each project can do here |
+| `bootstrap [NAME ...]` | Clones upstream projects into `external/` at the versions pinned in `UPSTREAMS.json` (`bootstrap gbtang snestang` for the Nano 20K cores) |
+| `test [--require-ghdl]` | Runs every testbench and the Python unit tests |
+| `lint` | Verilator `-Wall` lint of the synthesizable RTL |
+| `build PROJECT [--flow open\|gowin]` | Builds a Tang Nano 20K bitstream into `build/tangnano20k/PROJECT/` |
+| `fetch gbtang\|snestang` | Downloads the pinned release bitstream and menu firmware, with size/checksum checks |
+| `flash PROJECT [--sram] [--no-firmware] [--tool ...]` | Programs the board with openFPGALoader or Gowin's programmer |
+| `ide-project gbtang\|snestang` | Regenerates the Gowin IDE project from the upstream `build.tcl` |
 
-The default ROM directory is `games/snes`. Override it for a particular upstream release:
-
-```bash
-python3 scripts/prepare-snestang-sd.py build/my-game.sfc /media/$USER/SNESTANG_SD \
-  --rom-dir snes
-```
-
-## GBA Studio quick start
-
-```bash
-./scripts/bootstrap.sh
-./scripts/verify.sh
-./scripts/build-gba-studio-rom.sh /path/to/project.gbsproj build/my-game.gba
-```
-
-Validate the ROM in mGBA before testing it on GBATang 60K hardware.
+Projects: `gba_lcd_480x272`, `gbtang`, `snestang`.
 
 ## Tests
 
-The HDL suite requires Icarus Verilog and GHDL:
+`test` runs seven Icarus Verilog testbenches and the Python tests:
+
+| Testbench | Checks |
+|---|---|
+| `rgb_lcd_timing` | Measures Th, Thw, Thbp, Thfp and the vertical equivalents from the pins, for three panel profiles |
+| `gba_to_480x272_mapper` | All 130,560 panel pixels against true division; every GBA pixel shown 1-2 times |
+| `gba_test_pattern` | Each pattern's colours; sprite bounces inside the frame |
+| `gba_buttons` | Bounce and one-clock glitches rejected, both pin polarities |
+| `uart_tx` | 8N1 framing, back-to-back bytes |
+| `gba_cart_rom_reader` | No bus contention, no write strobes, correct data |
+| `tangnano20k gba_lcd_top` | Whole board design from power-up: two frames pixel-exact at the panel pins, S1 pattern change, LEDs, decoded UART line |
+
+The VHDL scaffold test under `ports/fpgba-tang60k` runs when GHDL is installed.
+CI runs the tests on Linux and macOS, lints the RTL and builds the
+gba_lcd_480x272 bitstream with OSS CAD Suite (downloadable from the run).
+
+## Layout
+
+```text
+rtl/           reusable RTL: video timing, GBA-to-480x272 scaler, test pattern,
+               buttons, UART, reset, ROM-only cartridge reader (+ testbenches)
+tangnano20k/   Tang Nano 20K projects: gba_lcd_480x272, gbtang, snestang
+ports/         other boards: FPGBA Tang 60K scaffold, GBATang notes
+scripts/       gbafpga.py, ROM and SD-card tools, .sh/.ps1 launchers
+tools/         SNES and Game Boy ROM header parsers used by the scripts
+tests/         Python unit tests
+docs/          design notes and hardware documentation
+hardware/      cartridge pinout, reader BOM, button map, wiring template
+external/      upstream checkouts made by bootstrap (not committed)
+```
+
+## Other workflows
+
+SNES Studio games (PVSnesLib `.sfc`) for SNESTang:
 
 ```bash
-make test
+python3 scripts/validate-snes-rom.py build/my-game.sfc
+python3 scripts/prepare-snestang-sd.py build/my-game.sfc /path/to/sdcard
 ```
 
-The SNES tools can be tested independently:
+GBA Studio games (`.gba`, for mGBA or GBATang on a 60K board) after
+`bootstrap gba-studio`:
 
 ```bash
-python3 -m unittest discover -s tests -v
+./scripts/build-gba-studio-rom.sh /path/to/project.gbsproj build/my-game.gba
 ```
 
-## Controls
+See [docs/GBA_STUDIO.md](docs/GBA_STUDIO.md) and [docs/SNES_NANO20K.md](docs/SNES_NANO20K.md).
 
-A normal GBA front PCB has only A and B. SNES requires A, B, X and Y, so the handheld front and PCB must use a four-button diamond. D-pad, L/R, Start and Select remain reusable for the later GBA configuration. Keep Menu/OSD as a separate input.
+## Status
 
-## Display
+- gba_lcd_480x272: passes simulation and builds with the open-source tools
+  (about 1,080 LUT4, timing met with a wide margin). Not yet run on hardware;
+  the Gowin IDE build is untested.
+- GBTang and SNESTang: upstream code at pinned versions; this repository adds
+  the tooling, IDE projects and ROM checks.
+- GBA on the Nano 20K: not feasible with the available cores.
+- Cartridge reader: ROM-only and simulation-only.
 
-Use HDMI for the first SNESTang prototype. Do not wire the ordered raw 480x272 panel until its exact controller, FPC pinout, I/O voltage, timing and backlight requirements are confirmed.
-
-## Repository status
-
-This is an integration workbench. It does not claim a completed FPGBA Gowin bitstream, vendor SNESTang/GBTang/GBATang source, or include Nintendo firmware or commercial game ROMs.
-
-## Publish
-
-```bash
-./scripts/publish-github.sh eoinjordan GBA-FPGA public
-```
-
-```powershell
-.\scripts\publish-github.ps1 -Owner eoinjordan -Repository GBA-FPGA -Visibility public
-```
+No BIOS images, commercial ROMs or bitstreams are committed; CI rejects them.
 
 ## Licence
 
-Original integration material is GPL-2.0-or-later. Upstream repositories retain their own licences.
+Original material is GPL-2.0-or-later. Upstream projects keep their own
+licences; see [NOTICE.md](NOTICE.md).

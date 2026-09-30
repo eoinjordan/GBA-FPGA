@@ -1,3 +1,11 @@
+"""SNES ROM header inspection and Tang Nano 20K size budget for SNESTang.
+
+Scores the three standard internal-header locations (LoROM 0x7FC0, HiROM
+0xFFC0, ExHiROM 0x40FFC0) on printable title, checksum/complement pair, reset
+vector and plausible map/size bytes, and reports the best match. A 512-byte
+copier header is detected by file size and skipped.
+"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
@@ -5,10 +13,12 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Iterable
 
+# ---- Limits -------------------------------------------------------------------
 COPIER_HEADER_SIZE = 512
 NANO20K_MAX_ROM_BYTES = int(3.75 * 1024 * 1024)
 
 
+# ---- Report types ---------------------------------------------------------------
 @dataclass(frozen=True)
 class HeaderCandidate:
     mapping: str
@@ -56,6 +66,7 @@ class RomReport:
         return asdict(self)
 
 
+# ---- Header parsing ---------------------------------------------------------------
 def _u16le(data: bytes, offset: int) -> int:
     return data[offset] | (data[offset + 1] << 8)
 
@@ -132,6 +143,7 @@ def candidate_headers(data: bytes) -> Iterable[HeaderCandidate]:
             yield candidate
 
 
+# ---- Public entry point -------------------------------------------------------------
 def inspect_rom(path: str | Path, max_rom_bytes: int = NANO20K_MAX_ROM_BYTES) -> RomReport:
     rom_path = Path(path)
     raw = rom_path.read_bytes()

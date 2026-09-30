@@ -5,27 +5,59 @@ on:
   pull_request:
 
 jobs:
-  systemverilog:
-    runs-on: ubuntu-latest
+  # Simulation with the distribution packages most Linux users install.
+  test-linux:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install HDL simulators
+      - name: Install simulators
         run: sudo apt-get update && sudo apt-get install -y iverilog ghdl
+      - name: Run all testbenches and Python tests
+        run: python3 scripts/gbafpga.py test --require-ghdl
+
+  # The same tests on macOS through the shell launcher (no GHDL: VHDL skipped).
+  test-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Icarus Verilog
+        run: brew install icarus-verilog
       - name: Run tests
-        run: make test
+        run: ./scripts/gbafpga.sh test
+      - name: Tool report
+        run: ./scripts/verify.sh || true
+
+  # Lint and a Tang Nano 20K bitstream with the open-source toolchain.
+  tangnano20k:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: YosysHQ/setup-oss-cad-suite@v3
+      - name: Verilator lint
+        run: python3 scripts/gbafpga.py lint
+      - name: Build gba_lcd_480x272
+        run: python3 scripts/gbafpga.py build gba_lcd_480x272 --flow open
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gba_lcd_480x272-bitstream
+          path: |
+            build/tangnano20k/gba_lcd_480x272/gba_lcd_480x272.fs
+            build/tangnano20k/gba_lcd_480x272/report.txt
 
   repository-safety:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Reject ROM and BIOS artifacts
+      - name: Reject ROM, BIOS and bitstream files
         shell: bash
         run: |
           set -euo pipefail
-          forbidden=$(find . -type f \( -iname '*.gba' -o -iname '*.gb' -o -iname '*.gbc' -o -iname '*.sfc' -o -iname '*.smc' -o -iname '*bios*.bin' -o -iname '*bios*.rom' \) -print)
+          forbidden=$(git ls-files | grep -iE '\.(gba|gb|gbc|sfc|smc|fs)$|bios.*\.(bin|rom)$' || true)
           if [[ -n "$forbidden" ]]; then
             echo "$forbidden"
             exit 1
           fi
       - name: Validate JSON
-        run: python3 -m json.tool UPSTREAMS.json >/dev/null
+        run: |
+          python3 -m json.tool UPSTREAMS.json > /dev/null
+          for f in tangnano20k/*/impl/project_process_config.json; do python3 -m json.tool "$f" > /dev/null; done

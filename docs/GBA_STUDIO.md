@@ -1,6 +1,6 @@
 # GBA Studio and GBA Engine integration
 
-GBA Studio is the authoring/compiler layer. GBA Engine is the C runtime linked into the generated ROM. Their output boundary is a normal `.gba` image.
+GBA Studio is the editor and compiler; GBA Engine is the C runtime linked into the ROM it produces. Their output is an ordinary `.gba` image.
 
 ## Development flow
 
@@ -26,11 +26,11 @@ Validate every generated ROM in three stages:
 2. GBATang on Tang 60K.
 3. Real GBA hardware or a flash cartridge where available.
 
-A failure in all three environments probably belongs in the game/runtime. A failure only on one FPGA core is more likely a hardware-compatibility or timing issue.
+A bug that shows up in all three is in the game or runtime; one that appears only on an FPGA core is more likely a core compatibility or timing issue.
 
 ## Build scripts
 
-The scripts implement GBA Studio's documented CLI build path in full:
+The build scripts run GBA Studio's command-line build:
 
 ```text
 npm ci                         # first run only
@@ -39,7 +39,7 @@ npm run make:cli
 node out/cli/gb-studio-cli.js make:rom project.gbsproj game.gba
 ```
 
-The wrapper scripts validate Node/npm, build the CLI bundle, invoke `make:rom`, and refuse success unless the requested `.gba` file exists. Node.js 20 or newer and devkitPro/devkitARM are required by GBA Studio.
+They check for Node and npm, build the CLI bundle, run `make:rom`, and fail unless the `.gba` file was written. GBA Studio needs Node.js 20 or newer and devkitPro with devkitARM. Fetch GBA Studio first with `python3 scripts/gbafpga.py bootstrap gba-studio`.
 
 ## Test ROM policy
 

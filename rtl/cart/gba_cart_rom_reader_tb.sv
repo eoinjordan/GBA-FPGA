@@ -1,5 +1,16 @@
 `timescale 1ns/1ps
 
+// =============================================================================
+// gba_cart_rom_reader_tb -- bus-safety and data checks for the ROM reader
+// =============================================================================
+// A behavioural Game Pak latches {A[23:16], AD[15:0]} on the falling edge of
+// /CS and returns (address ^ 16'hA5A5) while /CS and /RD are low and the FPGA
+// has released AD. The checker verifies, every clock:
+//   * /CS never falls unless the FPGA is driving the address;
+//   * /WR and /CS2 are never asserted (ROM-only);
+//   * each streamed word carries the right address and data, in order.
+// Waveforms: run with +vcd to write gba_cart_rom_reader_tb.vcd.
+// =============================================================================
 module gba_cart_rom_reader_tb;
     logic clk = 1'b0;
     logic rst_n = 1'b0;
@@ -30,6 +41,7 @@ module gba_cart_rom_reader_tb;
 
     always #5 clk = ~clk;
 
+    // ---- DUT: short RD wait keeps the run fast ---------------------------------------------
     gba_cart_rom_reader #(
         .ADDRESS_SETUP_CYCLES(2),
         .CS_LATCH_CYCLES(2),
@@ -58,6 +70,7 @@ module gba_cart_rom_reader_tb;
         .cart_cs2_n
     );
 
+    // ---- Cartridge model: drives AD only while selected, reading, and not driven by the FPGA ----
     always_comb begin
         if (!cart_cs_n && !cart_rd_n && !cart_ad_oe) begin
             cart_ad_in = model_latched_address[15:0] ^ 16'hA5A5;
@@ -66,7 +79,8 @@ module gba_cart_rom_reader_tb;
         end
     end
 
-    always_ff @(posedge clk) begin
+    // ---- Bus and stream checker ------------------------------------------------------------
+    always @(posedge clk) begin
         previous_cs_n <= cart_cs_n;
         if (previous_cs_n && !cart_cs_n) begin
             if (!cart_ad_oe) begin
@@ -99,9 +113,12 @@ module gba_cart_rom_reader_tb;
         end
     end
 
+    // ---- Stimulus: one 4-word read from 0x001234 ------------------------------------------------
     initial begin
-        $dumpfile("gba_cart_rom_reader_tb.vcd");
-        $dumpvars(0, gba_cart_rom_reader_tb);
+        if ($test$plusargs("vcd")) begin
+            $dumpfile("gba_cart_rom_reader_tb.vcd");
+            $dumpvars(0, gba_cart_rom_reader_tb);
+        end
 
         repeat (5) @(posedge clk);
         rst_n <= 1'b1;

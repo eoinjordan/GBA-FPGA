@@ -1,28 +1,44 @@
-# Tang Nano 20K plan
+# Tang Nano 20K
 
-The Nano 20K should be used as the first handheld integration board, but with a GB/GBC core rather than a GBA core.
+Gowin GW2AR-LV18QN88C8/I7: 20,736 LUT4, 15,552 flip-flops, 828 Kbit block RAM
+(46 x 18 Kbit), 48 18x18 multipliers, 2 rPLLs, 64 Mbit SDR SDRAM in the
+package. The board adds a 27 MHz crystal, HDMI, a 40-pin RGB LCD connector,
+microSD, a MAX98357A amplifier, 6 LEDs, 2 buttons and a BL616 USB debugger
+(JTAG plus a serial port).
 
-## Phase 1 — desktop bring-up
+## What runs on it
 
-1. Flash a known GBTang release.
-2. Confirm SD-card ROM loading over HDMI.
-3. Validate the button PCB using the active-low input module in `rtl/input`.
-4. Confirm I2S audio through the onboard amplifier.
+| Project | Status |
+|---|---|
+| `tangnano20k/gba_lcd_480x272` (this repository) | Simulated and built; waiting for a board test |
+| GBTang v1.0.0 (Game Boy) | Upstream release; build, flash and SD tooling here |
+| SNESTang v0.9 (SNES) | Upstream release; build, flash and SD tooling here |
+| Game Boy Advance | Does not fit; see [BOARD_MATRIX.md](BOARD_MATRIX.md) |
 
-## Phase 2 — 480x272 LCD
+Details, commands and pin tables: [tangnano20k/README.md](../tangnano20k/README.md).
 
-1. Identify the exact LCD part number and FPC pinout.
-2. Confirm whether the interface is RGB565, RGB666, RGB888, SPI, or 8080-style parallel.
-3. Confirm I/O voltage and backlight current.
-4. Run only the timing/color-bar generator first.
-5. Add the aspect-ratio-preserving coordinate mapper.
+## Bring-up order
 
-A 240x160 GBA frame maps cleanly to 408x272 while preserving 3:2 aspect ratio, leaving 36-pixel side borders on a 480x272 panel. The mapper in this repository generates source coordinates for that geometry.
+1. **Board and tools.** Flash `gba_lcd_480x272` without the panel. LED1 on,
+   LED0 blinking and `fps=058` on the serial port show the FPGA, PLL and
+   programming path work.
+2. **LCD.** Connect the HT043IBB panel and go through the four test patterns
+   ([LCD_480X272.md](LCD_480X272.md) has the panel data).
+3. **GBTang over HDMI** with a DualShock 2 or SNES pad.
+4. **SNESTang over HDMI**, same controllers.
+5. **Buttons.** GBTang and SNESTang already read SNES pads (latch, clock, data)
+   and DualShock 2 pads. A handheld button board built like a SNES pad (two
+   CD4021 or 74HC165 shift registers, A/B/X/Y/L/R/Start/Select and the D-pad)
+   works with both cores unchanged. `rtl/input/gba_buttons.sv` covers the other
+   option, one FPGA pin per button, for designs of our own.
+6. **LCD for the cores.** GBTang and SNESTang output HDMI only. Driving the
+   480x272 panel from a core needs a frame buffer (the GB's 160x144 at 2 bits
+   per pixel fits in block RAM) followed by a scaler like
+   `gba_to_480x272_mapper`.
 
-## Phase 3 — cartridge reader
+## Pin sharing
 
-Use the Nano 20K only for controlled ROM-read tests if sufficient GPIO remains. A companion RP2350 is preferred because the raw RGB LCD and cartridge buses compete for pins.
-
-## Phase 4 — migrate to 60K
-
-Move the established input, display, power, audio, and enclosure design to Tang 60K hardware for GBA execution.
+The RGB LCD connector shares pins 33-40 with HDMI, and the cores' SNES-pad
+inputs (pins 25-30) are also LCD pins. One bitstream drives either the LCD or
+HDMI with SNES pads; the DualShock 2 ports (17-20 and 52, 53, 71, 72) do not
+conflict with the LCD.
