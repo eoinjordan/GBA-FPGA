@@ -10,6 +10,8 @@ repository provides:
   UART RTL, with a checklist for the board;
 - **GBTang** (Game Boy) and **SNESTang** (SNES): pinned upstream versions with
   Gowin IDE projects, build and flash commands, and ROM/SD-card tools.
+- **gbtang_lcd**: Game Boy LCD target with CRC-checked ROM loading over USB
+  UART. See [its build and controls](tangnano20k/gbtang_lcd/README.md).
 
 GBA itself needs a Tang 60K-class board and GBATang; see
 [docs/BOARD_MATRIX.md](docs/BOARD_MATRIX.md).

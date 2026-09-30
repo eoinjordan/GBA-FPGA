@@ -1,5 +1,6 @@
 # Build output (tests, bitstreams, downloaded releases)
 /build/
+/.gowin-lab/
 
 # Upstream checkouts made by scripts/bootstrap
 /external/*

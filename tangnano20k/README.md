@@ -8,6 +8,7 @@ each with a Gowin IDE project, laid out like Sipeed's
 |---|---|---|---|
 | [gba_lcd_480x272](gba_lcd_480x272/) | GBA-FPGA display and input check: test image through the 240x160 to 408x272 scaler | 4.3" 480x272 RGB LCD | this repository |
 | [gbtang](gbtang/) | GBTang v1.0.0, original Game Boy | 720p HDMI | [fjpolo/GBTang](https://github.com/fjpolo/GBTang), pinned |
+| [gbtang_lcd](gbtang_lcd/) | Game Boy, ROM loaded over USB UART | 4.3" 480x272 RGB LCD | GBTang core with local LCD platform |
 | [snestang](snestang/) | SNESTang v0.9, SNES | 720p HDMI | [nand2mario/snestang](https://github.com/nand2mario/snestang), pinned |
 
 A Game Boy Advance core does not fit this board; GBA needs a Tang 60K-class

@@ -200,8 +200,9 @@ def pick_gowin(explicit: Optional[str], wanted_version: Optional[str]) -> Option
 
 LOCAL_PROJECT = "gba_lcd_480x272"
 LOCAL_DIR = REPO / "tangnano20k" / LOCAL_PROJECT
+LOCAL_PROJECTS = {LOCAL_PROJECT, "gbtang_lcd"}
 UPSTREAM_KEYS = {"gbtang": "GBTang", "snestang": "SNESTang"}
-PROJECTS = [LOCAL_PROJECT] + sorted(UPSTREAM_KEYS)
+PROJECTS = sorted(LOCAL_PROJECTS) + sorted(UPSTREAM_KEYS)
 BOARD = "tangnano20k"                      # openFPGALoader board name
 NEXTPNR_FAMILY = {"GW2AR-18C": "GW2A-18C"}  # .gprj device name -> nextpnr/gowin_pack family
 
@@ -360,6 +361,13 @@ def _testbenches() -> List[tuple]:
         ("gba_buttons", "gba_buttons_tb",
          [rtl / "input/button_debouncer.sv", rtl / "input/gba_buttons.sv", rtl / "input/gba_buttons_tb.sv"]),
         ("uart_tx", "uart_tx_tb", [rtl / "common/uart_tx.sv", rtl / "common/uart_tx_tb.sv"]),
+        ("GB LCD UART loader", "gb_uart_loader_tb",
+         [REPO / "tangnano20k/gbtang_lcd/src/gb_uart_loader.sv",
+          REPO / "tangnano20k/gbtang_lcd/sim/gb_uart_loader_tb.sv"]),
+        ("GB LCD video", "gb_lcd_video_tb",
+         [rtl / "video/rgb_lcd_timing.sv",
+          REPO / "tangnano20k/gbtang_lcd/src/gb_lcd_video.sv",
+          REPO / "tangnano20k/gbtang_lcd/sim/gb_lcd_video_tb.sv"]),
         ("gba_cart_rom_reader", "gba_cart_rom_reader_tb",
          [rtl / "cart/gba_cart_rom_reader.sv", rtl / "cart/gba_cart_rom_reader_tb.sv"]),
         ("tangnano20k gba_lcd_top", "gba_lcd_top_tb",
@@ -370,12 +378,15 @@ def _testbenches() -> List[tuple]:
 def _run_testbench(name: str, top: str, sources: List[Path], out_dir: Path) -> tuple:
     binary = out_dir / f"{top}.vvp"
     log = out_dir / f"{top}.log"
-    compiled = subprocess.run([tool("iverilog"), "-g2012", "-Wall", "-s", top, "-o", str(binary)]
+    ivl = Path(tool("iverilog")).resolve().parent.parent / "lib" / "ivl"
+    compiler = [tool("iverilog")] + (["-B", str(ivl)] if IS_WINDOWS and ivl.is_dir() else [])
+    runtime = [tool("vvp")] + (["-M-", "-M", str(ivl)] if IS_WINDOWS and ivl.is_dir() else [])
+    compiled = subprocess.run(compiler + ["-g2012", "-Wall", "-s", top, "-o", str(binary)]
                               + [str(s) for s in sources], env=TOOL_ENV, capture_output=True, text=True)
     if compiled.returncode != 0:
         log.write_text(compiled.stdout + compiled.stderr, encoding="utf-8")
         return False, "compile error (see " + str(log.relative_to(REPO)) + ")"
-    ran = subprocess.run([tool("vvp"), "-n", str(binary)], cwd=str(out_dir), env=TOOL_ENV,
+    ran = subprocess.run(runtime + ["-n", str(binary)], cwd=str(out_dir), env=TOOL_ENV,
                          capture_output=True, text=True)
     log.write_text(compiled.stderr + ran.stdout + ran.stderr, encoding="utf-8")
     passed = ran.returncode == 0 and "PASS:" in ran.stdout and "FAIL" not in ran.stdout
@@ -568,8 +579,8 @@ def _build_gowin(project: str, out_dir: Path, gowin_dir: Optional[str]) -> Path:
     if wanted and not install.version.startswith(wanted):
         print(f"  warning: upstream builds {project} with Gowin {wanted}; results may differ")
 
-    if project == LOCAL_PROJECT:
-        proj = read_gowin_project(LOCAL_DIR)
+    if project in LOCAL_PROJECTS:
+        proj = read_gowin_project(REPO / "tangnano20k" / project)
         work = out_dir / "gowin"
         work.mkdir(parents=True, exist_ok=True)
         tcl = _gowin_tcl_for_local(proj, work)
@@ -672,10 +683,11 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 def _bitstream_candidates(project: str) -> List[Path]:
     """Every place a build route leaves the bitstream."""
     out_dir = project_build_dir(project)
-    if project == LOCAL_PROJECT:
-        name = read_gowin_project(LOCAL_DIR).output_name + ".fs"
+    if project in LOCAL_PROJECTS:
+        project_dir = REPO / "tangnano20k" / project
+        name = read_gowin_project(project_dir).output_name + ".fs"
         return [out_dir / name,                               # gbafpga.py build (open or gowin flow)
-                LOCAL_DIR / "impl" / "pnr" / name]            # Gowin IDE: Run All on the .gprj
+                project_dir / "impl" / "pnr" / name]            # Gowin IDE: Run All on the .gprj
     pin = upstream(project)
     meta = pin["nano20k"]
     return [out_dir / meta["bitstream"],                                          # gbafpga.py build
@@ -685,7 +697,7 @@ def _bitstream_candidates(project: str) -> List[Path]:
 
 
 def _firmware_candidates(project: str) -> List[Path]:
-    if project == LOCAL_PROJECT:
+    if project in LOCAL_PROJECTS:
         return []
     pin = upstream(project)
     meta = pin["nano20k"]
@@ -720,7 +732,7 @@ def cmd_flash(args: argparse.Namespace) -> int:
                                             else f", or download it: python3 scripts/gbafpga.py fetch {args.project}")])
 
     firmware: Optional[Path] = None
-    if args.project != LOCAL_PROJECT and not args.no_firmware:
+    if args.project not in LOCAL_PROJECTS and not args.no_firmware:
         if args.firmware:
             firmware = Path(args.firmware)
             if not firmware.is_file():
