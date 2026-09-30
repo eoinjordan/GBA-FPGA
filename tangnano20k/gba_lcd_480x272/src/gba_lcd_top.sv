@@ -7,8 +7,8 @@
 // Panel : HT043IBB-16A3047-H4, 4.3" 480x272 parallel RGB, NV3047 driver,
 //         on the Nano 20K 40-pin RGB connector
 //
-// Exercises every reusable GBA-FPGA block on real hardware without a core or
-// a ROM, and reports what it sees over USB serial:
+// Exercises the GBA-FPGA display, input and UART blocks on real hardware
+// without a core or a ROM, and reports what it sees over USB serial:
 //
 //   lcd_pll                27 MHz crystal -> 9 MHz DCLK        LED1, "pll=1"
 //   rgb_lcd_timing         NV3047 SYNC-DE timing               stable picture
@@ -50,7 +50,8 @@ module gba_lcd_top #(
 );
     // ---- Panel profile: HT043IBB-16A3047-H4 / NV3047 "Typ." column ------------------------------
     // Thbp = H_SYNC + H_BACK = 43, Tvbp = V_SYNC + V_BACK = 12, 531 x 292 total,
-    // 58.05 Hz at 9 MHz. Change these (and nothing else) for a different panel.
+    // 58.05 Hz at 9 MHz. Porches, sync widths and polarity can be changed for
+    // another panel; the active size is fixed at 480x272 by the mapper.
     localparam integer H_ACTIVE = 480;
     localparam integer H_FRONT  = 8;
     localparam integer H_SYNC   = 4;
