@@ -5,6 +5,9 @@ FPGA work towards a GBA-shaped handheld on Sipeed Tang boards.
 A Game Boy Advance core does not fit the Tang Nano 20K, so on that board this
 repository provides:
 
+<img width="1599" height="851" alt="image" src="https://github.com/user-attachments/assets/aebb4726-dd81-4026-bc3b-dc194a7a7830" />
+
+
 - **gba_lcd_480x272**: a test design for the 4.3" 480x272 LCD
   (HT043IBB-16A3047-H4) that exercises this repository's display, input and
   UART RTL, with a checklist for the board;
