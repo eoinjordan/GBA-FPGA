@@ -1,6 +1,6 @@
 # GBA-FPGA
 
-FPGA work towards a GBA-shaped handheld on Sipeed Tang boards.
+FPGA work towards a GBA-shaped handheld on Sipeed Tang boards. Tang 20k only works with GBA Studio Roms as its just too small for full GBA titles: https://github.com/eoinjordan/GBA-Studio
 
 A Game Boy Advance core does not fit the Tang Nano 20K, so on that board this
 repository provides:
