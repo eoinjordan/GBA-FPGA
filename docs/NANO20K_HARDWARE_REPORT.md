@@ -193,6 +193,19 @@ game firmware runs from SDRAM and requires another upload after power-off.
 The local `studio_lcd/game/` directory contains the latest Sunstone native
 firmware and manifest; these generated game files are ignored by Git.
 
+## Installed Windows Studio check
+
+After disk space was cleared, the Studio 4.4.9 Windows Squirrel installer
+built and installed successfully with exit code 0. The owner confirmed the
+installed editor opened Sunstone Relay. Its distributed compiler worker and
+bundled engine reproduced the tested 35,536-byte firmware. A fresh SRAM
+program/upload check verified CRC `ee54d55f`, 28.915 fps and no CPU fault.
+See the [phase report](reports/windows-local-e2e-2026-10-01.json).
+
+The native Handheld button action still awaits an owner-operated check;
+desktop automation failed to initialize. No fresh LCD camera capture was
+available because DirectShow could not enumerate video devices.
+
 ## Enclosure confirmation
 
 On 1 October 2026 the owner reported the larger 3D print as verified. The
