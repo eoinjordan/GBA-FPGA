@@ -192,3 +192,10 @@ Putting the FPGA image in nonvolatile flash does not persist the game:
 game firmware runs from SDRAM and requires another upload after power-off.
 The local `studio_lcd/game/` directory contains the latest Sunstone native
 firmware and manifest; these generated game files are ignored by Git.
+
+## Enclosure confirmation
+
+On 1 October 2026 the owner reported the larger 3D print as verified. The
+specific filenames and fitted components have not yet been recorded. This
+confirmation does not establish the compact case or 20K/60K adapter fit.
+See the [case notes](../3D-Case/README.md) and [BOM](../hardware/BOM.md).

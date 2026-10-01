@@ -23,6 +23,10 @@ or resolution alone does not establish connector compatibility.
 
 ## Printed parts and fasteners
 
+The owner reported the larger 3D print as verified on 1 October 2026. The
+specific printed filenames, fitted components and fasteners have not yet
+been recorded; the per-part BOM status remains unchanged until identified.
+
 | Part | Quantity | File |
 |---|---:|---|
 | Front shell | 1 | [STL](../3D-Case/gba_fpga_front_shell_v2.stl) |

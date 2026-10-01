@@ -97,8 +97,9 @@ but the game must be loaded again after power-off because it runs from SDRAM.
 
 The [hardware BOM](hardware/BOM.md) lists the working board/LCD setup and
 unfinished handheld parts. The [case v2 package](3D-Case/README.md) includes
-seven STL files, the preview and a Python generator. Case fit is unverified;
-these models assume the larger 4.3-inch LCD.
+seven STL files, the preview and a Python generator. The owner reported the
+larger 3D print as verified on 1 October 2026; the specific parts and assembly
+checks have not yet been recorded. These models assume the larger 4.3-inch LCD.
 The new [compact GBA-style prototype](3D-Case/compact/README.md) uses an
 original-sized front footprint and includes 20K/60K SOM mounting adapters.
 Its smaller LCD envelope and physical fit remain provisional.

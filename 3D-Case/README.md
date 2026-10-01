@@ -4,8 +4,11 @@ For a smaller screen and an original-sized front footprint, see the new
 [compact prototype with 20K/60K SOM mounting adapters](compact/README.md).
 
 Seven STL parts for a Tang Nano 20K, a 4.3-inch LCD and passive split GBA
-button PCBs. These are the existing v2 models; physical fit has not been
-verified. Dimensions are in millimetres. Print at 100% scale.
+button PCBs. These are the existing v2 models. On 1 October 2026 the owner
+reported the larger 3D print as verified. The exact filenames and scope of
+the fit check have not yet been recorded, so individual parts below remain
+without a documented assembly result. Dimensions are in millimetres.
+Print at 100% scale.
 
 ![Front and back layout](gba_fpga_case_v2_preview.png)
 
