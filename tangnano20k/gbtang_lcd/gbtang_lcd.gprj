@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project><Template>FPGA</Template><Version>5</Version>
+<Device name="GW2AR-18C" pn="GW2AR-LV18QN88C8/I7">gw2ar18c-000</Device>
+<FileList>
+<File path="src/config.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/src/nano20k/gowin_pll_gb.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/alu.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/boy.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/brom.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/clk_div.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/common.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/control.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/cpu.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/dma.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/edgedet.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/mbc5.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/ppu.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/regfile.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/serial.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/singleport_ram.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/singlereg.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_channel_mix.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_length_ctr.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_noise.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_square.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_vol_env.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/sound_wave.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/VerilogBoy/rtl/timer.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/src/hw_uart.v" type="file.verilog" enable="1"/>
+<File path="../../external/GBTang/src/sdram_gb.v" type="file.verilog" enable="1"/>
+<File path="../../rtl/common/reset_sync.sv" type="file.verilog" enable="1"/>
+<File path="../../rtl/common/uart_tx.sv" type="file.verilog" enable="1"/>
+<File path="../../rtl/input/button_debouncer.sv" type="file.verilog" enable="1"/>
+<File path="../../rtl/input/gba_buttons.sv" type="file.verilog" enable="1"/>
+<File path="../../rtl/video/rgb_lcd_timing.sv" type="file.verilog" enable="1"/>
+<File path="src/gb_uart_loader.sv" type="file.verilog" enable="1"/>
+<File path="src/gb_lcd_video.sv" type="file.verilog" enable="1"/>
+<File path="src/gbtang_lcd_top.sv" type="file.verilog" enable="1"/>
+<File path="src/gbtang_lcd.cst" type="file.cst" enable="1"/>
+<File path="src/gbtang_lcd.sdc" type="file.sdc" enable="1"/>
+</FileList></Project>

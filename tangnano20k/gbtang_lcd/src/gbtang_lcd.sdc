@@ -1,0 +1,6 @@
+create_clock -name crystal -period 37.037 [get_ports {sys_clk}]
+create_clock -name main -period 46.296 [get_pins {pll_gb/rpll_inst/CLKOUTD3}]
+create_clock -name memory -period 15.432 [get_pins {pll_gb/rpll_inst/CLKOUT}]
+create_generated_clock -name gb -source [get_pins {pll_gb/rpll_inst/CLKOUTD3}] -divide_by 5 [get_pins {clk_gb_s4/Q}]
+create_clock -name pixel -period 111.111 [get_pins {lcd_pll/CLKOUT}]
+set_clock_groups -asynchronous -group [get_clocks {pixel}] -group [get_clocks {crystal main memory gb}]

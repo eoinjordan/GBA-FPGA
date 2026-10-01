@@ -1,0 +1,159 @@
+{
+  "units": "mm",
+  "fit_status": "prototype-unmeasured",
+  "parameters": {
+    "body_width": 144.5,
+    "body_height": 82.0,
+    "front_depth": 8.5,
+    "back_depth": 16.0,
+    "wall": 2.0,
+    "face": 1.8,
+    "clearance": 0.35,
+    "lcd_outer_width": 70.0,
+    "lcd_outer_height": 51.0,
+    "lcd_thickness": 3.5,
+    "lcd_visible_width": 61.2,
+    "lcd_visible_height": 40.8,
+    "lcd_center_y": 35.0,
+    "dpad_center": [
+      20.5,
+      41.5
+    ],
+    "dpad_size": 22.0,
+    "dpad_arm": 7.5,
+    "a_center": [
+      126.0,
+      36.5
+    ],
+    "b_center": [
+      115.0,
+      48.0
+    ],
+    "ab_hole_diameter": 10.4,
+    "select_center": [
+      62.0,
+      70.0
+    ],
+    "start_center": [
+      82.5,
+      70.0
+    ],
+    "board_center_y": 41.0,
+    "adapter_width": 102.0,
+    "adapter_height": 60.0,
+    "adapter_hole_spacing_x": 92.0,
+    "adapter_hole_spacing_y": 50.0,
+    "nano20k_width": 76.5,
+    "nano20k_height": 25.5,
+    "som60k_width": 45.0,
+    "som60k_height": 35.0,
+    "pcb_thickness": 1.6,
+    "spacer_depth": 8.0
+  },
+  "models": {
+    "compact_front_shell": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 7960,
+      "extents_mm": [
+        144.5,
+        82.0,
+        8.5
+      ],
+      "volume_mm3": 19057.4,
+      "sha256": "d9d933c380b42d2f0d19696f01c82314760bd4d14572eb1d793ad20ca358511e"
+    },
+    "compact_back_shell": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 7796,
+      "extents_mm": [
+        144.5,
+        82.0,
+        16.0
+      ],
+      "volume_mm3": 33391.285,
+      "sha256": "d0027f5024a0f6ed8fa003a432b96a52708cf667e6d8422b2482f9584fd4cf0e"
+    },
+    "compact_display_bezel": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 746,
+      "extents_mm": [
+        76.0,
+        57.0,
+        3.8
+      ],
+      "volume_mm3": 5272.885,
+      "sha256": "e9ea8cd3a910186a221e154fd8a18c118a6c8856f5c9da86a7e5eaad9338fc65"
+    },
+    "compact_lcd_retainer": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 2208,
+      "extents_mm": [
+        85.0,
+        66.0,
+        1.4
+      ],
+      "volume_mm3": 2054.399,
+      "sha256": "3d69f460b84c8899de00dc7a0491e98b5c16341580a048b96fceecf3710550de"
+    },
+    "compact_adapter_nano20k": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 2402,
+      "extents_mm": [
+        102.0,
+        60.0,
+        5.2
+      ],
+      "volume_mm3": 9099.502,
+      "sha256": "98ca4552690fb41b54c9750ab0c9fb8e6576e651b3ce81086cc36d2a1bee0ba2"
+    },
+    "compact_adapter_mega60k_som": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 2402,
+      "extents_mm": [
+        102.0,
+        60.0,
+        5.2
+      ],
+      "volume_mm3": 9588.252,
+      "sha256": "e451d65f11813f87326aea481134c59d29a0451ef96eadc87e89d64e4dc2d5e0"
+    },
+    "compact_rear_spacer_8mm": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 1,
+      "faces": 4518,
+      "extents_mm": [
+        144.5,
+        82.0,
+        8.0
+      ],
+      "volume_mm3": 8121.512,
+      "sha256": "bc66b3662a1153a330cb8f5f69702a55e512d65e159ae2cdf27ac6bcba6fa59a"
+    },
+    "compact_button_pcb_clamps": {
+      "watertight": true,
+      "winding_consistent": true,
+      "components": 8,
+      "faces": 3712,
+      "extents_mm": [
+        60.0,
+        16.5,
+        2.0
+      ],
+      "volume_mm3": 772.051,
+      "sha256": "2460ee17065b695cd4a2e30ba97072247c5f5aad5b5712721c443d25af4e601e"
+    }
+  }
+}

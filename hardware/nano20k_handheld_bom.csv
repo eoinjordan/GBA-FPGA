@@ -1,0 +1,23 @@
+reference,quantity,unit,description,part_or_file,status,notes
+E01,1,board,Tang Nano 20K,Sipeed GW2AR-LV18QN88C8/I7,owned-tested,USB-powered Studio and Game Boy LCD setup
+E02,1,panel,4.3-inch 480x272 RGB LCD,HT043IBB-16A3047-H4,owned-tested,Uses existing Nano 20K LCD connector; case envelope not physically verified
+E03,1,cable,USB data and power cable,Match board USB connector,used-tested,Programming UART and bench power
+E04,1,set,Passive split GBA button PCBs,Existing custom contact boards,owned-unwired,External FPGA GPIO assignments pending
+E05,1,set,GBA button caps D-pad and silicone contacts,Existing controls,reuse-fit-pending,Includes A B Start Select D-pad L and R; PCB and shoulder fit unverified
+E06,,as-required,Button wiring and connectors,Unselected,pending,Quantity lengths connectors and pin map depend on final layout
+P01,1,print,Front shell,3D-Case/gba_fpga_front_shell_v2.stl,model-available,Estimated v2 dimensions; fit not verified
+P02,1,print,Back shell,3D-Case/gba_fpga_back_shell_v2.stl,model-available,Estimated v2 dimensions; fit not verified
+P03,1,print,Sloped rear module cover,3D-Case/gba_fpga_sloped_rear_module_cover_v2.stl,model-available,Check mounting ears and fastening in slicer
+P04,1,print,LCD retainer,3D-Case/gba_fpga_lcd_retainer_v2.stl,model-available,Print first to check panel fit
+P05,1,print,Nano 20K tray,3D-Case/gba_fpga_tang_nano_20k_tray_v2.stl,model-available,76.5x25.5 mm board envelope plus clearance parameter
+P06,1,set,Button PCB clamps,3D-Case/gba_fpga_button_pcb_clamp_set_v2.stl,model-available,One mesh contains eight separate clamps
+P07,1,optional-print,Cartridge adapter tray,3D-Case/gba_fpga_cartridge_adapter_tray_v2.stl,optional,86x54 mm assumed board envelope; not needed for USB games
+M01,,as-required,Screws,Unselected,fit-pending,Measure holes bosses and depth before choosing sizes and quantities
+M02,,as-required,Heat-set inserts if used,Unselected,fit-pending,Confirm insert dimensions against each boss; not validated
+M03,,slicer-estimate,Filament,Print profile selection,fit-pending,Mass depends on supports walls infill and material
+F01,1,optional-cell,Battery,Unselected,pending,Current hardware validation uses USB power
+F02,1,optional-board,Charger and power-path controller,Unselected,pending,No battery charging circuit selected or tested
+F03,,optional-as-required,Regulators and power switch,Unselected,pending,Final rail current and backlight requirements not measured
+F04,1,optional-board,Audio amplifier,Unselected,pending,Current LCD targets do not provide audio output
+F05,1,optional-speaker,Speaker,Unselected,pending,Fit and electrical requirements undecided
+F06,1,optional-assembly,GBA cartridge reader,hardware/gba_cartridge_reader_bom.csv,separate-prototype,Not needed for USB game loading and not validated with this handheld

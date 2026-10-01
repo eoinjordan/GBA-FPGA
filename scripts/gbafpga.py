@@ -55,7 +55,7 @@ def fail(message: str) -> "NoReturn":  # type: ignore[name-defined]
 
 
 def run(cmd: List[str], cwd: Optional[Path] = None, log: Optional[Path] = None,
-        check: bool = True) -> subprocess.CompletedProcess:
+        check: bool = True, timeout: Optional[float] = None) -> subprocess.CompletedProcess:
     """Run a command with the tool environment, optionally teeing output to a log."""
     cmd = [str(c) for c in cmd]
     # Windows resolves the program with the parent's PATH, not env["PATH"].
@@ -63,9 +63,12 @@ def run(cmd: List[str], cwd: Optional[Path] = None, log: Optional[Path] = None,
         cmd[0] = tool(cmd[0]) or fail(f"{cmd[0]} not found (run 'doctor')")
     shown = " ".join(cmd)
     print(f"  $ {shown if len(shown) < 300 else shown[:297] + '...'}")
-    result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=TOOL_ENV,
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-                            errors="replace")
+    try:
+        result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=TOOL_ENV,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                                errors="replace", timeout=timeout)
+    except subprocess.TimeoutExpired:
+        fail(f"{cmd[0]} timed out after {timeout}s; check cable type/location and close other programmers")
     if log:
         log.parent.mkdir(parents=True, exist_ok=True)
         log.write_text(result.stdout, encoding="utf-8")
@@ -200,8 +203,9 @@ def pick_gowin(explicit: Optional[str], wanted_version: Optional[str]) -> Option
 
 LOCAL_PROJECT = "gba_lcd_480x272"
 LOCAL_DIR = REPO / "tangnano20k" / LOCAL_PROJECT
+LOCAL_PROJECTS = {LOCAL_PROJECT, "gbtang_lcd", "studio_lcd"}
 UPSTREAM_KEYS = {"gbtang": "GBTang", "snestang": "SNESTang"}
-PROJECTS = [LOCAL_PROJECT] + sorted(UPSTREAM_KEYS)
+PROJECTS = sorted(LOCAL_PROJECTS) + sorted(UPSTREAM_KEYS)
 BOARD = "tangnano20k"                      # openFPGALoader board name
 NEXTPNR_FAMILY = {"GW2AR-18C": "GW2A-18C"}  # .gprj device name -> nextpnr/gowin_pack family
 
@@ -360,6 +364,24 @@ def _testbenches() -> List[tuple]:
         ("gba_buttons", "gba_buttons_tb",
          [rtl / "input/button_debouncer.sv", rtl / "input/gba_buttons.sv", rtl / "input/gba_buttons_tb.sv"]),
         ("uart_tx", "uart_tx_tb", [rtl / "common/uart_tx.sv", rtl / "common/uart_tx_tb.sv"]),
+        ("GB LCD UART loader", "gb_uart_loader_tb",
+         [REPO / "tangnano20k/gbtang_lcd/src/gb_uart_loader.sv",
+          REPO / "tangnano20k/gbtang_lcd/sim/gb_uart_loader_tb.sv"]),
+        ("GB LCD video", "gb_lcd_video_tb",
+         [rtl / "video/rgb_lcd_timing.sv",
+          REPO / "tangnano20k/gbtang_lcd/src/gb_lcd_video.sv",
+          REPO / "tangnano20k/gbtang_lcd/sim/gb_lcd_video_tb.sv"]),
+        ("Studio memory bus", "studio_bus_tb",
+         [REPO / "tangnano20k/studio_lcd/src/rv_fast_bus.sv",
+          REPO / "tangnano20k/studio_lcd/src/rv_sdram_bus.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_bus_tb.sv"]),
+        ("Studio LCD video", "studio_lcd_video_tb",
+         [rtl / "video/rgb_lcd_timing.sv",
+          REPO / "tangnano20k/studio_lcd/src/studio_lcd_video.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_lcd_video_tb.sv"]),
+        ("Studio hardware renderer", "studio_renderer_tb",
+         [REPO / "tangnano20k/studio_lcd/src/studio_renderer.sv",
+          REPO / "tangnano20k/studio_lcd/sim/studio_renderer_tb.sv"]),
         ("gba_cart_rom_reader", "gba_cart_rom_reader_tb",
          [rtl / "cart/gba_cart_rom_reader.sv", rtl / "cart/gba_cart_rom_reader_tb.sv"]),
         ("tangnano20k gba_lcd_top", "gba_lcd_top_tb",
@@ -370,12 +392,15 @@ def _testbenches() -> List[tuple]:
 def _run_testbench(name: str, top: str, sources: List[Path], out_dir: Path) -> tuple:
     binary = out_dir / f"{top}.vvp"
     log = out_dir / f"{top}.log"
-    compiled = subprocess.run([tool("iverilog"), "-g2012", "-Wall", "-s", top, "-o", str(binary)]
+    ivl = Path(tool("iverilog")).resolve().parent.parent / "lib" / "ivl"
+    compiler = [tool("iverilog")] + (["-B", str(ivl)] if IS_WINDOWS and ivl.is_dir() else [])
+    runtime = [tool("vvp")] + (["-M-", "-M", str(ivl)] if IS_WINDOWS and ivl.is_dir() else [])
+    compiled = subprocess.run(compiler + ["-g2012", "-Wall", "-s", top, "-o", str(binary)]
                               + [str(s) for s in sources], env=TOOL_ENV, capture_output=True, text=True)
     if compiled.returncode != 0:
         log.write_text(compiled.stdout + compiled.stderr, encoding="utf-8")
         return False, "compile error (see " + str(log.relative_to(REPO)) + ")"
-    ran = subprocess.run([tool("vvp"), "-n", str(binary)], cwd=str(out_dir), env=TOOL_ENV,
+    ran = subprocess.run(runtime + ["-n", str(binary)], cwd=str(out_dir), env=TOOL_ENV,
                          capture_output=True, text=True)
     log.write_text(compiled.stderr + ran.stdout + ran.stderr, encoding="utf-8")
     passed = ran.returncode == 0 and "PASS:" in ran.stdout and "FAIL" not in ran.stdout
@@ -568,8 +593,8 @@ def _build_gowin(project: str, out_dir: Path, gowin_dir: Optional[str]) -> Path:
     if wanted and not install.version.startswith(wanted):
         print(f"  warning: upstream builds {project} with Gowin {wanted}; results may differ")
 
-    if project == LOCAL_PROJECT:
-        proj = read_gowin_project(LOCAL_DIR)
+    if project in LOCAL_PROJECTS:
+        proj = read_gowin_project(REPO / "tangnano20k" / project)
         work = out_dir / "gowin"
         work.mkdir(parents=True, exist_ok=True)
         tcl = _gowin_tcl_for_local(proj, work)
@@ -672,10 +697,11 @@ def cmd_fetch(args: argparse.Namespace) -> int:
 def _bitstream_candidates(project: str) -> List[Path]:
     """Every place a build route leaves the bitstream."""
     out_dir = project_build_dir(project)
-    if project == LOCAL_PROJECT:
-        name = read_gowin_project(LOCAL_DIR).output_name + ".fs"
+    if project in LOCAL_PROJECTS:
+        project_dir = REPO / "tangnano20k" / project
+        name = read_gowin_project(project_dir).output_name + ".fs"
         return [out_dir / name,                               # gbafpga.py build (open or gowin flow)
-                LOCAL_DIR / "impl" / "pnr" / name]            # Gowin IDE: Run All on the .gprj
+                project_dir / "impl" / "pnr" / name]            # Gowin IDE: Run All on the .gprj
     pin = upstream(project)
     meta = pin["nano20k"]
     return [out_dir / meta["bitstream"],                                          # gbafpga.py build
@@ -685,7 +711,7 @@ def _bitstream_candidates(project: str) -> List[Path]:
 
 
 def _firmware_candidates(project: str) -> List[Path]:
-    if project == LOCAL_PROJECT:
+    if project in LOCAL_PROJECTS:
         return []
     pin = upstream(project)
     meta = pin["nano20k"]
@@ -706,6 +732,32 @@ def _not_found(what: str, searched: List[Path], hints: List[str]) -> "NoReturn":
 
 
 def cmd_flash(args: argparse.Namespace) -> int:
+    game = None
+    game_arg = getattr(args, "game", None)
+    if game_arg and args.project != "studio_lcd":
+        fail("--game requires the studio_lcd FPGA platform")
+    game_dir = REPO / "tangnano20k" / "studio_lcd" / "game"
+    if args.project == "studio_lcd" and not getattr(args, "no_game", False):
+        if game_arg or list(game_dir.glob("*.tang.bin")):
+            from studio_game import find_game
+            try:
+                game = find_game(game_arg or game_dir)
+            except ValueError as error:
+                fail(str(error))
+            if not getattr(args, "port", None):
+                fail("Set --port for the USB game loader (COM5, /dev/ttyACM0 or /dev/cu.usbmodem...)")
+            if not args.dry_run:
+                try:
+                    import serial
+                except ImportError:
+                    fail("Install the USB loader dependency: python -m pip install pyserial")
+                try:
+                    with serial.Serial(port=None) as connection:
+                        connection.dtr = connection.rts = False
+                        connection.port = args.port
+                        connection.open()
+                except (OSError, serial.SerialException) as error:
+                    fail("USB loader preflight failed; install pyserial and close other serial clients: " + str(error))
     # ---- Pick the files: explicit paths win, otherwise the newest from any route.
     if args.bitstream:
         bitstream = Path(args.bitstream)
@@ -720,7 +772,7 @@ def cmd_flash(args: argparse.Namespace) -> int:
                                             else f", or download it: python3 scripts/gbafpga.py fetch {args.project}")])
 
     firmware: Optional[Path] = None
-    if args.project != LOCAL_PROJECT and not args.no_firmware:
+    if args.project not in LOCAL_PROJECTS and not args.no_firmware:
         if args.firmware:
             firmware = Path(args.firmware)
             if not firmware.is_file():
@@ -751,6 +803,8 @@ def cmd_flash(args: argparse.Namespace) -> int:
         if not install or not install.programmer_cli:
             fail("no flash tool: install openFPGALoader, or Gowin EDA with its Programmer")
         base = [install.programmer_cli, "--device", "GW2AR-18C", "--cable-index", str(args.cable_index)]
+        if getattr(args, "location", None) is not None:
+            base += ["--location", str(args.location)]
         if firmware:
             commands.append(base + ["--run", "36", "--spiaddr", offset, "--fsFile", firmware])
         if args.sram:
@@ -762,7 +816,18 @@ def cmd_flash(args: argparse.Namespace) -> int:
         if args.dry_run:
             print("  would run: " + " ".join(str(c) for c in command))
         else:
-            run(command)
+            result = run(command, timeout=180)
+            print(result.stdout)
+    if game:
+        command = [sys.executable, REPO / "scripts/load-studio-lcd.py", "--port", args.port,
+                   "--firmware", game, "--report", getattr(args, "report", None) or BUILD / "hardware/studio-flash.json"]
+        if args.dry_run:
+            print("  would load game: " + " ".join(str(c) for c in command))
+        else:
+            print(run(command).stdout)
+            print("Game loaded into SDRAM. Run the loader again after power-off or FPGA reprogramming.")
+    elif args.project == "studio_lcd":
+        print("Platform only: the LCD waits for a native Studio game over USB.")
     print("dry run, nothing written" if args.dry_run else "done")
     return 0
 
@@ -928,8 +993,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     flash.add_argument("--bitstream", help="bitstream to use instead of the build/fetch output")
     flash.add_argument("--firmware", help="firmware.bin to write at 0x500000 (gbtang/snestang)")
     flash.add_argument("--no-firmware", action="store_true", help="skip the firmware write")
+    flash.add_argument("--game", help="studio_lcd: native *.tang.bin or folder containing one and build.json")
+    flash.add_argument("--no-game", action="store_true", help="skip studio_lcd/game folder auto-loading")
+    flash.add_argument("--port", help="USB UART for the Studio game loader")
+    flash.add_argument("--report", help="JSON game transfer, CPU and frame-rate report")
     flash.add_argument("--tool", choices=["auto", "openfpgaloader", "gowin"], default="auto")
     flash.add_argument("--gowin", help="Gowin EDA install folder, for --tool gowin")
+    flash.add_argument("--location", type=int, help="Gowin USB location from programmer_cli --scan-cables")
     flash.add_argument("--cable-index", type=int, default=4,
                        help="Gowin programmer cable index (4 = Tang Nano 20K onboard debugger)")
     flash.add_argument("--dry-run", action="store_true",
