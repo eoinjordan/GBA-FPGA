@@ -1,0 +1,18 @@
+reference,quantity,unit,description,part_or_file,status,notes
+C01,1,print,Compact front shell,3D-Case/compact/compact_front_shell.stl,prototype,144.5x82 mm front footprint; physical fit unverified
+C02,1,print,Compact back shell,3D-Case/compact/compact_back_shell.stl,prototype,16 mm nominal rear depth
+C03,1,print,Replaceable display bezel,3D-Case/compact/compact_display_bezel.stl,prototype,Default active opening 61.2x40.8 mm; LCD model unselected
+C04,1,print,LCD retainer,3D-Case/compact/compact_lcd_retainer.stl,prototype,Four mounting tabs; panel compression and shims pending
+C05,1,alternative-print,Nano 20K mounting adapter,3D-Case/compact/compact_adapter_nano20k.stl,prototype,Select for 20K; assumed board envelope 76.5x25.5 mm
+C06,1,alternative-print,Mega 60K SOM mounting adapter,3D-Case/compact/compact_adapter_mega60k_som.stl,prototype,Select for bare 45x35 mm SOM; does not fit a full dock by assumption
+C07,1,set,Eight generic button clamps,3D-Case/compact/compact_button_pcb_clamps.stl,prototype,Custom PCB mounting points and L/R actuator fit pending
+C08,1,optional-print,8 mm rear spacer,3D-Case/compact/compact_rear_spacer_8mm.stl,prototype,For extra stack height; needs longer perimeter fasteners
+C09,1,panel,Smaller LCD,Unselected,pending,Provisional 70x51x3.5 mm outer envelope; check actual dimensions and interface
+C10,1,alternative-board,Tang Nano 20K,Sipeed Nano 20K,owned-tested,Existing electronics; compact mounting fit not validated
+C11,1,alternative-module,Mega 60K SOM,Sipeed 60K SOM,variant-pending,User board variant not confirmed
+C12,1,if-using-bare-SOM,Compatible 60K carrier and electrical interfaces,Unselected,pending,Mechanical cradle supplies no electrical routing
+C13,6,position,Perimeter fasteners,Size and length unselected,fit-pending,CAD has six positions; pilot and clearance holes require a material-specific fit check
+C14,4,position,Board adapter fasteners,Size and length unselected,fit-pending,CAD has four positions on a 92x50 mm pattern
+C15,4,position,LCD retainer fasteners,Size and length unselected,fit-pending,CAD has four positions; do not overtighten against glass
+C16,1,set,Existing GBA controls and passive PCBs,Existing custom button hardware,fit-pending,Button travel membrane placement GPIO wiring and shoulder support unfinished
+C17,,as-required,Wiring ties shims and USB extension,Unselected,pending,Component keep-outs cable exits and service-port routing need physical measurements

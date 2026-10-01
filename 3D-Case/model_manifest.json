@@ -1,0 +1,119 @@
+{
+  "parameters": {
+    "body_width": 194.0,
+    "body_height": 110.0,
+    "front_depth": 11.8,
+    "back_depth": 13.2,
+    "face_thickness": 2.2,
+    "front_wall": 2.2,
+    "back_wall": 2.5,
+    "seam_clearance": 0.35,
+    "lcd_outer_width": 105.5,
+    "lcd_outer_height": 67.2,
+    "lcd_thickness": 3.2,
+    "lcd_active_width": 95.0,
+    "lcd_active_height": 53.9,
+    "lcd_center_x": 97.0,
+    "lcd_center_y": 47.5,
+    "dpad_center_x": 25.5,
+    "dpad_center_y": 58.0,
+    "dpad_overall": 27.2,
+    "dpad_arm": 9.6,
+    "button_a_x": 172.0,
+    "button_a_y": 53.0,
+    "button_b_x": 157.8,
+    "button_b_y": 64.0,
+    "ab_hole_diameter": 12.6,
+    "select_x": 86.0,
+    "start_x": 108.0,
+    "start_select_y": 89.0,
+    "start_select_width": 13.0,
+    "start_select_height": 5.0,
+    "tang_board_width": 76.5,
+    "tang_board_height": 25.5,
+    "cart_board_width": 86.0,
+    "cart_board_height": 54.0,
+    "print_clearance": 0.35,
+    "screw_clearance_diameter": 2.8,
+    "screw_boss_outer_diameter": 7.0
+  },
+  "models": {
+    "gba_fpga_front_shell_v2": {
+      "watertight": true,
+      "vertices": 7386,
+      "faces": 14824,
+      "extents_mm": [
+        194.0,
+        110.169,
+        13.5
+      ],
+      "components": 24
+    },
+    "gba_fpga_back_shell_v2": {
+      "watertight": true,
+      "vertices": 4190,
+      "faces": 8360,
+      "extents_mm": [
+        194.0,
+        110.169,
+        13.2
+      ],
+      "components": 23
+    },
+    "gba_fpga_sloped_rear_module_cover_v2": {
+      "watertight": true,
+      "vertices": 1344,
+      "faces": 2688,
+      "extents_mm": [
+        123.0,
+        65.0,
+        7.0
+      ],
+      "components": 5
+    },
+    "gba_fpga_lcd_retainer_v2": {
+      "watertight": true,
+      "vertices": 1208,
+      "faces": 2432,
+      "extents_mm": [
+        126.5,
+        88.2,
+        1.8
+      ],
+      "components": 1
+    },
+    "gba_fpga_tang_nano_20k_tray_v2": {
+      "watertight": true,
+      "vertices": 1536,
+      "faces": 3064,
+      "extents_mm": [
+        82.6,
+        31.5,
+        7.5
+      ],
+      "components": 7
+    },
+    "gba_fpga_cartridge_adapter_tray_v2": {
+      "watertight": true,
+      "vertices": 1536,
+      "faces": 3064,
+      "extents_mm": [
+        92.1,
+        60.0,
+        8.2
+      ],
+      "components": 7
+    },
+    "gba_fpga_button_pcb_clamp_set_v2": {
+      "watertight": true,
+      "vertices": 2368,
+      "faces": 4736,
+      "extents_mm": [
+        68.0,
+        19.5,
+        2.4
+      ],
+      "components": 8
+    }
+  }
+}

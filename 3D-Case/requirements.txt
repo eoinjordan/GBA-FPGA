@@ -1,0 +1,8 @@
+numpy==2.5.3
+trimesh==5.1.0
+shapely==2.1.2
+matplotlib==3.11.2
+scipy==1.18.1
+networkx==3.7
+manifold3d==3.5.4
+mapbox-earcut==2.1.0

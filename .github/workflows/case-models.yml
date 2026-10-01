@@ -1,0 +1,39 @@
+name: case-models
+
+on:
+  push:
+    paths:
+      - '3D-Case/**'
+      - '.github/workflows/case-models.yml'
+  pull_request:
+    paths:
+      - '3D-Case/**'
+      - '.github/workflows/case-models.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: 3D-Case/requirements.txt
+      - name: Install CAD dependencies
+        run: python -m pip install -r 3D-Case/requirements.txt
+      - name: Generate existing v2 models
+        run: python 3D-Case/generate_gba_fpga_case.py
+      - name: Generate and validate compact STL exports
+        run: python 3D-Case/compact/generate_compact_case.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: compact-case-${{ matrix.os }}
+          path: build/hardware/enclosure-compact/

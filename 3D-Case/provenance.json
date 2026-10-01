@@ -1,0 +1,18 @@
+{
+  "source_package": "GBA_FPGA_Case_v2_STL_OBJ.zip",
+  "source_sha256": "20858d8e9a07d20b18e0cca292e17dec55283814009ab3fac788780d990452f6",
+  "source_models": "Existing v2 STLs unchanged",
+  "generator_changes": [
+    "Separate output directory",
+    "Do not rewrite repository README",
+    "NumPy-compatible 2D cross product"
+  ],
+  "search": {
+    "date": "2026-10-01",
+    "file_paths_inspected": 11925,
+    "archives_inspected": 1926,
+    "v1_found": false,
+    "smaller_lcd_found": false,
+    "limits": "Accessible C: paths; archive scan excludes system/package directories. Offline storage and unnamed designs are not ruled out."
+  }
+}

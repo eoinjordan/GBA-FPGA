@@ -71,6 +71,14 @@ external button GPIO assignments remain unfinished. The Game Boy target's
 
 ## Quick start
 
+The [hardware BOM](hardware/BOM.md) lists the working board/LCD setup and
+unfinished handheld parts. The [case v2 package](3D-Case/README.md) includes
+seven STL files, the preview and a Python generator. Case fit is unverified;
+these models assume the larger 4.3-inch LCD.
+The new [compact GBA-style prototype](3D-Case/compact/README.md) uses an
+original-sized front footprint and includes 20K/60K SOM mounting adapters.
+Its smaller LCD envelope and physical fit remain provisional.
+
 Install the tools for your OS ([docs/TOOLCHAIN.md](docs/TOOLCHAIN.md)), then
 from the repository root:
 
@@ -143,7 +151,8 @@ scripts/       gbafpga.py, ROM and SD-card tools, .sh/.ps1 launchers
 tools/         SNES and Game Boy ROM header parsers used by the scripts
 tests/         Python unit tests
 docs/          design notes and hardware documentation
-hardware/      cartridge pinout, reader BOM, button map, wiring template
+hardware/      handheld BOM, cartridge pinout, reader BOM, button map, wiring template
+3D-Case/       seven v2 enclosure STLs, dimensions, preview and generator
 external/      upstream checkouts made by bootstrap (not committed)
 ```
 
