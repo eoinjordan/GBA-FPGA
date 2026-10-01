@@ -72,12 +72,18 @@ external button GPIO assignments remain unfinished. The Game Boy target's
 ## Flash a Studio game
 
 GBA Studio's **Handheld** button builds the open project and can program the
-FPGA before loading the native game. The latest source-to-hardware checks
+FPGA before loading the native game. The earlier Studio 4.4.9 source-to-hardware checks
 passed for both demos: Sunstone Relay at **28.915 fps** and Poachermon at
 **28.928 fps**, with verified CRCs and no CPU faults. See the
 [updated report](docs/NANO20K_HARDWARE_REPORT.md#studio-build-flash-and-browser-update).
 The resource table above still describes the current FPGA image; these game
 and asset changes do not alter its logic or RAM usage.
+
+Studio 4.4.10 adds a title and three playable areas to each game. Both new
+native exports compiled and passed their campaign checks through the C engine.
+Both games also reached their endings in the browser. A fresh board upload is
+pending because COM5 and all other serial ports were absent during this check.
+See the [current game report](docs/reports/three-scene-games-2026-10-01.json).
 
 For a project-directory workflow, put one `*.tang.bin` and its adjacent
 `build.json` in `tangnano20k/studio_lcd/game/`, then run:

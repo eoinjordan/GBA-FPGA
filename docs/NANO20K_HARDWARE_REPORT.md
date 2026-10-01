@@ -206,6 +206,29 @@ The native Handheld button action still awaits an owner-operated check;
 desktop automation failed to initialize. No fresh LCD camera capture was
 available because DirectShow could not enumerate video devices.
 
+## Three-scene Studio games
+
+Studio 4.4.10 and engine `ccf8554` add explicit title/ending input waits and
+remove the global START scene-skip shortcut. Sunstone and Poachermon each
+have an opening title, three playable areas, objective gates and replay.
+The GBA renderer also uses halfword writes for background VRAM, correcting
+distorted title lettering in mGBA. Dialogue compiles into visible two-line pages.
+
+Both ARM ROMs and Tang firmware compiled. Both exported campaigns passed
+through the C engine with mock hardware, including early objective rejection,
+repeat interactions, return visits, completion and replay. Both games reached
+their endings through normal browser keyboard input. Collision searches
+verified reachable interactions and exits in every area.
+
+The [structured game report](reports/three-scene-games-2026-10-01.json) records
+the current firmware sizes, hashes and CRCs. The new Sunstone export and its
+matching manifest are available locally in `studio_lcd/game/`. A new hardware
+upload was unavailable: no serial ports were detected, including COM5. The
+older measured frame rates above do not establish performance for this build.
+
+No RTL changed, so the Gowin resource, timing and model-power results above
+still describe the FPGA platform. This update adds no voltage or LCD measurement.
+
 ## Enclosure confirmation
 
 On 1 October 2026 the owner reported the larger 3D print as verified. The

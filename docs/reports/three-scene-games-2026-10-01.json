@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-01",
+  "studio_version": "4.4.10",
+  "studio_commit": "6a57b391c",
+  "engine_commit": "ccf8554",
+  "campaign_structure": "separate title plus three playable scenes",
+  "games": [
+    {
+      "game": "sunstone",
+      "bytes": 48012,
+      "sha256": "25904ef0921afc2048295498ffdfd7f270b389b7fb264945f49c31e3bdb75a11",
+      "crc32": "9a3088a9",
+      "native_build": "passed",
+      "compiled_campaign_runtime": "passed",
+      "hardware_upload": "not run: no serial ports detected"
+    },
+    {
+      "game": "poachermon",
+      "bytes": 43244,
+      "sha256": "4b5325a7f12356ef908d71dc1f2daeadcb7ccd6594ce502ca3b1fbe6335264ca",
+      "crc32": "eace0a04",
+      "native_build": "passed",
+      "compiled_campaign_runtime": "passed",
+      "hardware_upload": "not run: no serial ports detected"
+    }
+  ],
+  "browser": "Both campaigns completed through normal keyboard play; final text and art revision also passed exported-runtime tests",
+  "hardware": "No serial ports detected; COM5 unavailable",
+  "fpga_resources": "Unchanged from existing Gowin place-and-route report; no RTL changes"
+}
