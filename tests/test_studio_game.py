@@ -22,7 +22,7 @@ class StudioGameTests(unittest.TestCase):
             'target': 'tangnano20k-rv32im', 'sha256': hashlib.sha256(self.game.read_bytes()).hexdigest()}))
 
     def test_folder_and_manifest(self):
-        self.assertEqual(find_game(self.folder), self.game)
+        self.assertEqual(find_game(self.folder), self.game.resolve())
         self.game.write_bytes(b'corrupt')
         with self.assertRaisesRegex(ValueError, 'manifest'): find_game(self.folder)
 
