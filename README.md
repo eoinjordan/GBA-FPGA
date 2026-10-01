@@ -19,23 +19,27 @@ The available complete GBA core targets Tang 60K-class boards with GBATang; see
 
 ## Nano 20K capacity and hardware results
 
-The `studio_lcd` build was programmed and tested on the Nano 20K with the
-4.3" 480x272 RGB LCD and Gowin V1.9.12.04. These figures describe that
-build; the Game Boy, SNES and LCD test designs have different resource use.
-Percentages below retain Gowin's reported values.
+Studio and Game Boy games have run on the Nano 20K with the 4.3" 480x272
+RGB LCD. These capacity figures come from the 1 October 2026 Gowin
+V1.9.12.04 place-and-route reports. Percentages retain Gowin's reported values.
+See the [hardware report](docs/NANO20K_HARDWARE_REPORT.md) for timing paths,
+warning analysis, power assumptions and build hashes.
 
-| Resource | Used / available | Gowin utilization |
+| Resource | Studio LCD | Game Boy LCD |
 |---|---:|---:|
-| Logic | 14,358 / 20,736 | 70% |
-| Registers | 5,108 / 15,915 | 33% |
-| Configurable logic sections (CLS) | 8,127 / 10,368 | 79% |
-| Block RAM | 46 / 46 (2 SP, 44 SDPB) | 100% |
-| DSP | 1 MULT9X9, 2 MULTADDALU18X18 | 10% |
-| rPLL | 2 / 2 | 100% |
-| Primary clock resources | 5 / 8 | 63% |
-| I/O ports | 27 / 66 | 41% |
+| Logic | 14,251 / 20,736 (69%) | 4,108 / 20,736 (20%) |
+| Registers | 5,142 / 15,915 (33%) | 1,843 / 15,915 (12%) |
+| Configurable logic sections (CLS) | 8,060 / 10,368 (78%) | 2,815 / 10,368 (28%) |
+| Block RAM | 46 / 46 (100%; 2 SP, 44 SDPB) | 16 / 46 (35%; 8 SP, 8 SDPB) |
+| DSP | 1 MULT9X9, 2 MULTADDALU18X18 (10%) | No DSP usage entry |
+| rPLL | 2 / 2 (100%) | 2 / 2 (100%) |
+| Primary clock resources | 5 / 8 (63%) | 5 / 8 (63%) |
+| Local clock resources (LW) | 8 / 8 (100%) | 5 / 8 (63%) |
+| I/O ports | 27 / 66 (41%) | 27 / 66 (41%) |
 
 Gowin reported **zero setup and hold violations** for this Studio build.
+The Game Boy build has zero setup violations and **one hold violation at
+-1.323 ns** on the fabric divider feedback path; timing closure remains open.
 The CPU runs at 21.6 MHz, the SDRAM clock at 64.8 MHz, and the LCD pixel
 clock at 9 MHz. Block RAM and both PLLs are fully allocated; adding another
 large buffer or debug capture core requires a resource budget change.
@@ -45,12 +49,15 @@ large buffer or debug capture core requires a resource budget change.
 | Studio starter title | 57.8-57.9 fps | CRC-checked upload; no CPU fault |
 | Blank GBA template | 57.8 fps | CRC-checked upload; no CPU fault |
 | Poachermon | 28.9 fps | CRC-checked upload; no CPU fault |
+| Sunstone Relay isometric test | 29.0 fps | CRC-checked upload; no CPU fault; LCD and dialogue input confirmed |
 | Pokemon Red on `gbtang_lcd` | Not benchmarked | CRC-checked upload; gameplay confirmed on LCD |
 
 The Studio figures are approximately five-second UART frame-counter
 measurements. The LCD scans at about 58 Hz even when a game updates more
 slowly. Studio games compile to native `game.tang.bin` firmware; this target
 does not execute ARM `.gba` ROMs. Games load over USB UART without an SD card.
+Reload game firmware after FPGA programming or a reset: a platform reporting
+`loaded=false` displays black while waiting for an upload.
 
 Gowin's FPGA power estimate was **262.5 mW total**, split into **122.8 mW
 quiescent** and **139.7 mW dynamic** power. It used default switching activity

@@ -55,6 +55,15 @@ CRC32 (all integers little-endian), `Q` for status, and `K` + key mask.
 `P`/`H` return the low/high program counter halves; `A` returns the last
 bus address's low half. Replies use the 16-byte `TGST` status layout.
 
+Game firmware is volatile. After FPGA programming or a reset, upload it
+again; `loaded=false` with zero frames explains a black display while the
+platform waits for a game. To run the Sunstone Relay isometric example,
+from the Studio repository:
+
+```sh
+python scripts/build-tang.py examples/isometric-adventure/project.gbsproj out/tang/isometric --port COM5
+```
+
 The renderer supports the engine's Mode 0 BG0/BG1 4bpp tiles, scrolling,
 tile flips, palette banks, dialogue and regular sprites with 1D tile
 mapping. Affine sprites, 8bpp tiles, blending, audio and persistent saves
@@ -63,11 +72,15 @@ The framebuffer is single-buffered, so tearing is possible.
 
 Hardware validation used Gowin 1.9.12.04 on this LCD. The Studio starter
 title measured 57.9 game fps; its menu scenes measured about 29 fps.
-The build used 14358/20736 logic resources and all 46 block RAMs. Gowin
+The 1 October build used 14251/20736 logic resources and all 46 block RAMs. Gowin
 reported zero setup and hold violations. Larger scenes and scripts can
 reduce the game update rate. The LCD raster runs at approximately 58 Hz.
+The current isometric firmware measured about 29 game fps with no CPU fault;
+camera captures confirm the scene and dialogue advancing with A. See the
+[hardware report](../../docs/NANO20K_HARDWARE_REPORT.md) for evidence and limits.
 
 Run `python scripts/gbafpga.py test` for the memory bus, complete LCD
-raster, and renderer tests. Bitstreams, local ROMs and webcam evidence
-stay in ignored build directories. PicoRV32 retains its ISC licence in
+raster, and renderer tests. Bitstreams and local ROMs stay in ignored build
+directories; selected camera captures accompany the hardware report.
+PicoRV32 retains its ISC licence in
 `src/picorv32.v`; the SDRAM platform derives from GPL-3.0-or-later GBTang.

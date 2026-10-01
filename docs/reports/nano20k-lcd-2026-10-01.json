@@ -1,0 +1,405 @@
+{
+  "date": "2026-10-01",
+  "tool": "Gowin V1.9.12.04 (64-bit)",
+  "part": "GW2AR-LV18QN88C8/I7",
+  "fpga_source_commit": "96f32e700a986eae9a9f589e849314b2d58c56dd",
+  "targets": {
+    "gbtang_lcd": {
+      "timing": {
+        "Created Time": "Thu Oct 1 09:48:45 2026",
+        "Setup Delay Model": "Slow 0.95V 85C C8/I7",
+        "Hold Delay Model": "Fast 1.05V 0C C8/I7",
+        "Numbers of Paths Analyzed": "9031",
+        "Numbers of Endpoints Analyzed": "5544",
+        "Numbers of Setup Violated Endpoints": "0",
+        "Numbers of Hold Violated Endpoints": "1"
+      },
+      "worst_setup": {
+        "Path Number": "1",
+        "Path Slack": "4.641",
+        "From Node": "sys_resetn_s4/Q",
+        "To Node": "sdram/a_5_s0/D",
+        "From Clock": "main:[R]",
+        "To Clock": "memory:[R]",
+        "Relation": "15.432",
+        "Clock Skew": "0.000",
+        "Data Delay": "10.721"
+      },
+      "worst_hold": {
+        "Path Number": "1",
+        "Path Slack": "-1.323",
+        "From Node": "n43_s2/I3",
+        "To Node": "clk_gb_s4/D",
+        "From Clock": "gb:[R]",
+        "To Clock": "main:[R]",
+        "Relation": "0.000",
+        "Clock Skew": "-1.511",
+        "Data Delay": "0.234"
+      },
+      "max_frequency": [
+        {
+          "NO.": "1",
+          "Clock Name": "main",
+          "Constraint": "21.600(MHz)",
+          "Actual Fmax": "108.153(MHz)",
+          "Logic Level": "9",
+          "Entity": "TOP"
+        },
+        {
+          "NO.": "2",
+          "Clock Name": "memory",
+          "Constraint": "64.800(MHz)",
+          "Actual Fmax": "197.047(MHz)",
+          "Logic Level": "6",
+          "Entity": "TOP"
+        },
+        {
+          "NO.": "3",
+          "Clock Name": "pixel",
+          "Constraint": "9.000(MHz)",
+          "Actual Fmax": "108.709(MHz)",
+          "Logic Level": "3",
+          "Entity": "TOP"
+        },
+        {
+          "NO.": "4",
+          "Clock Name": "gb",
+          "Constraint": "4.320(MHz)",
+          "Actual Fmax": "46.611(MHz)",
+          "Logic Level": "10",
+          "Entity": "TOP"
+        }
+      ],
+      "resources": [
+        [
+          "Logic",
+          "4108/20736",
+          "20%"
+        ],
+        [
+          "Register",
+          "1843/15915",
+          "12%"
+        ],
+        [
+          "CLS",
+          "2815/10368",
+          "28%"
+        ],
+        [
+          "I/O Port",
+          "27/66",
+          "41%"
+        ],
+        [
+          "BSRAM",
+          "8 SP8 SDPB",
+          "35%"
+        ],
+        [
+          "PRIMARY",
+          "5/8",
+          "63%"
+        ],
+        [
+          "LW",
+          "5/8",
+          "63%"
+        ],
+        [
+          "rPLL",
+          "2/2",
+          "100%"
+        ]
+      ],
+      "power": {
+        "Related Vcd File": "",
+        "Related Saif File": "",
+        "Default IO Toggle Rate": "0.125",
+        "Default Remain Toggle Rate": "0.125",
+        "Total Power (mW)": "164.104",
+        "Quiescent Power (mW)": "122.768",
+        "Dynamic Power (mW)": "41.336"
+      },
+      "synthesis_warning_counts": {
+        "EX2478": 1,
+        "EX3801": 5,
+        "EX3073": 1,
+        "EX3791": 19,
+        "EX3779": 13,
+        "EX3858": 1,
+        "NL0002": 8,
+        "CK3000": 2
+      },
+      "pnr_warning_counts": {
+        "PR1014": 1
+      },
+      "artifacts": [
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/pnr/gbtang_lcd.rpt.html",
+          "sha256": "9ffa9e2062d470047271c2b308f01748d4bfcf5f7659d2d7eab9b7493adf21c8"
+        },
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/pnr/gbtang_lcd_tr_content.html",
+          "sha256": "96ad8a071c72868c2dc416af23e72278b136b70fdc84693510dcdf78f7be9c2b"
+        },
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/pnr/gbtang_lcd.power.html",
+          "sha256": "dc0c1f2a9a3535c184ff7734be0eff616f8ee1f0656bb28f59d3232d39afc799"
+        },
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/pnr/gbtang_lcd.fs",
+          "sha256": "ba8041016cbc009091b40da29b3e4b631447c1fa90bccd54ccade682941a6102"
+        },
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/gwsynthesis/gbtang_lcd.log",
+          "sha256": "b22ea4195a21a213a45ff96717aaf12744fda0c04549f0b66c6c39fb4d77a5a0"
+        },
+        {
+          "path": "tangnano20k/gbtang_lcd/impl/pnr/gbtang_lcd.log",
+          "sha256": "c3be415ad1872e3443544c19ffc1d8bd266dcf51e61371ffc14c77a7684630f1"
+        }
+      ],
+      "block_ram": {
+        "used": 16,
+        "available": 46
+      }
+    },
+    "studio_lcd": {
+      "timing": {
+        "Created Time": "Thu Oct 1 09:51:20 2026",
+        "Setup Delay Model": "Slow 0.95V 85C C8/I7",
+        "Hold Delay Model": "Fast 1.05V 0C C8/I7",
+        "Numbers of Paths Analyzed": "16267",
+        "Numbers of Endpoints Analyzed": "16884",
+        "Numbers of Setup Violated Endpoints": "0",
+        "Numbers of Hold Violated Endpoints": "0"
+      },
+      "worst_setup": {
+        "Path Number": "1",
+        "Path Slack": "10.734",
+        "From Node": "bus/rv_req_s0/Q",
+        "To Node": "sdram/cmd_1_s0/D",
+        "From Clock": "main:[R]",
+        "To Clock": "memory:[R]",
+        "Relation": "15.432",
+        "Clock Skew": "0.000",
+        "Data Delay": "4.628"
+      },
+      "worst_hold": {
+        "Path Number": "1",
+        "Path Slack": "0.329",
+        "From Node": "rx/r_SM_Main_2_s0/Q",
+        "To Node": "rx/r_SM_Main_1_s0/RESET",
+        "From Clock": "main:[R]",
+        "To Clock": "main:[R]",
+        "Relation": "0.000",
+        "Clock Skew": "0.000",
+        "Data Delay": "0.340"
+      },
+      "max_frequency": [
+        {
+          "NO.": "1",
+          "Clock Name": "main",
+          "Constraint": "21.600(MHz)",
+          "Actual Fmax": "50.346(MHz)",
+          "Logic Level": "6",
+          "Entity": "TOP"
+        },
+        {
+          "NO.": "2",
+          "Clock Name": "memory",
+          "Constraint": "64.800(MHz)",
+          "Actual Fmax": "239.509(MHz)",
+          "Logic Level": "4",
+          "Entity": "TOP"
+        },
+        {
+          "NO.": "3",
+          "Clock Name": "pixel",
+          "Constraint": "9.000(MHz)",
+          "Actual Fmax": "47.020(MHz)",
+          "Logic Level": "4",
+          "Entity": "TOP"
+        }
+      ],
+      "resources": [
+        [
+          "Logic",
+          "14251/20736",
+          "69%"
+        ],
+        [
+          "Register",
+          "5142/15915",
+          "33%"
+        ],
+        [
+          "CLS",
+          "8060/10368",
+          "78%"
+        ],
+        [
+          "I/O Port",
+          "27/66",
+          "41%"
+        ],
+        [
+          "BSRAM",
+          "2 SP44 SDPB",
+          "100%"
+        ],
+        [
+          "DSP",
+          "1 MULT9X92 MULTADDALU18X18",
+          "10%"
+        ],
+        [
+          "PRIMARY",
+          "5/8",
+          "63%"
+        ],
+        [
+          "LW",
+          "8/8",
+          "100%"
+        ],
+        [
+          "rPLL",
+          "2/2",
+          "100%"
+        ]
+      ],
+      "power": {
+        "Related Vcd File": "",
+        "Related Saif File": "",
+        "Default IO Toggle Rate": "0.125",
+        "Default Remain Toggle Rate": "0.125",
+        "Total Power (mW)": "262.482",
+        "Quiescent Power (mW)": "122.768",
+        "Dynamic Power (mW)": "139.713"
+      },
+      "synthesis_warning_counts": {
+        "EX3801": 5,
+        "EX3638": 2,
+        "EX3073": 2,
+        "EX3791": 34,
+        "EX3826": 14,
+        "EX3827": 8
+      },
+      "pnr_warning_counts": {
+        "PR1014": 1
+      },
+      "artifacts": [
+        {
+          "path": "tangnano20k/studio_lcd/impl/pnr/studio_lcd.rpt.html",
+          "sha256": "b266707b5335e450f06e0adae9b33b5ecd04dc8ddadfa7e4bc2d6018d4d0a574"
+        },
+        {
+          "path": "tangnano20k/studio_lcd/impl/pnr/studio_lcd_tr_content.html",
+          "sha256": "d67e63f14e3fe7e5e391f963d37699c7a4c0c44aae21080ccad7c4f3ac6597f9"
+        },
+        {
+          "path": "tangnano20k/studio_lcd/impl/pnr/studio_lcd.power.html",
+          "sha256": "50bc82dd9c6d17ce58b0e4ad68ab72f7fac92cf074b88351c2e051dcf3b4ba79"
+        },
+        {
+          "path": "tangnano20k/studio_lcd/impl/pnr/studio_lcd.fs",
+          "sha256": "c9943753e234a671a7b8aae3556a283039d6ffac40f6f35d22e5ede303e41eb5"
+        },
+        {
+          "path": "tangnano20k/studio_lcd/impl/gwsynthesis/studio_lcd.log",
+          "sha256": "9bb05ed1a34f23e3f002e8d850fb2c9d1066241a2d280391fcf2543ea0016a9d"
+        },
+        {
+          "path": "tangnano20k/studio_lcd/impl/pnr/studio_lcd.log",
+          "sha256": "2252bfae1fdcacc6c1a0bbcdd6470cf16175f45e5c7af95de75b485b15d9be85"
+        }
+      ],
+      "block_ram": {
+        "used": 46,
+        "available": 46
+      }
+    }
+  },
+  "isometric_hardware": {
+    "firmware": "GBA-Studio/out/tang/isometric-current/firmware/game.tang.bin",
+    "sha256": "1da774c952e49dae1fe64613ea585474fe35bae9cee89a2e77a2aeae7ef50b52",
+    "bytes": 32272,
+    "transfer": {
+      "loaded": true,
+      "bytes": 32272,
+      "crc32": "bc6fa058",
+      "frames": 0,
+      "cpu_fault": false
+    },
+    "benchmark": {
+      "seconds": 5.005,
+      "rendered_frames": 145,
+      "fps": 28.974
+    },
+    "status": {
+      "loaded": true,
+      "bytes": 32272,
+      "crc32": "bc6fa058",
+      "frames": 199,
+      "cpu_fault": false
+    },
+    "debug": {
+      "instruction_address": "00004158",
+      "last_bus_address_low16": "0008"
+    },
+    "studio_commit": "c20131603",
+    "engine_commit": "bd59f49",
+    "visual_confirmation": true,
+    "loaded_bitstream_identity": "Not read back; UART confirms the Studio platform protocol",
+    "visual_observations": [
+      "Isometric village and opening dialogue visible on the LCD",
+      "Serial A advanced the dialogue"
+    ],
+    "visual_limitations": [
+      "Movement and complete quest not tested"
+    ],
+    "camera_artifacts": [
+      {
+        "path": "docs/reports/images/isometric-lcd-2026-10-01.jpg",
+        "sha256": "85d1a7b922d57fde3ae99eed092530ebff33b23b427920c499040f1dda6dc02d"
+      },
+      {
+        "path": "docs/reports/images/isometric-lcd-after-a-2026-10-01.jpg",
+        "sha256": "093f0bd7f43ae29ff1a39e97e9e44350e0613dcfae6a60d01ec949cf6999b4d8"
+      }
+    ],
+    "followup_status": {
+      "benchmark": {
+        "seconds": 2.006,
+        "rendered_frames": 59,
+        "fps": 29.415
+      },
+      "status": {
+        "loaded": true,
+        "bytes": 32272,
+        "crc32": "bc6fa058",
+        "frames": 5765,
+        "cpu_fault": false
+      },
+      "debug": {
+        "instruction_address": "00000e2c",
+        "last_bus_address_low16": "7e1c"
+      }
+    },
+    "input_status": {
+      "status": {
+        "loaded": true,
+        "bytes": 32272,
+        "crc32": "bc6fa058",
+        "frames": 11251,
+        "cpu_fault": false
+      },
+      "debug": {
+        "instruction_address": "00004158",
+        "last_bus_address_low16": "0008"
+      }
+    }
+  }
+}

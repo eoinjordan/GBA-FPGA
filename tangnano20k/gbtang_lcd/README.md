@@ -14,7 +14,10 @@ Windows and Linux can also build with
 ROM loading and simulation work on Windows, Linux and macOS; the vendor
 build requires Windows or Linux. The current Gowin timing report has one
 hold violation on the fabric clock divider's feedback path. This remains
-a bring-up build until that clock constraint is resolved.
+a bring-up build until the divider clocking and timing constraints are resolved.
+The 1 October report uses 4108/20736 logic resources and 16/46 block RAMs,
+with worst hold slack of -1.323 ns. See the
+[hardware report](../../docs/NANO20K_HARDWARE_REPORT.md) for the path and warnings.
 
 Install pyserial once with `python -m pip install pyserial`, then:
 
