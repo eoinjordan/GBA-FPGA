@@ -55,7 +55,7 @@ def fail(message: str) -> "NoReturn":  # type: ignore[name-defined]
 
 
 def run(cmd: List[str], cwd: Optional[Path] = None, log: Optional[Path] = None,
-        check: bool = True) -> subprocess.CompletedProcess:
+        check: bool = True, timeout: Optional[float] = None) -> subprocess.CompletedProcess:
     """Run a command with the tool environment, optionally teeing output to a log."""
     cmd = [str(c) for c in cmd]
     # Windows resolves the program with the parent's PATH, not env["PATH"].
@@ -63,9 +63,12 @@ def run(cmd: List[str], cwd: Optional[Path] = None, log: Optional[Path] = None,
         cmd[0] = tool(cmd[0]) or fail(f"{cmd[0]} not found (run 'doctor')")
     shown = " ".join(cmd)
     print(f"  $ {shown if len(shown) < 300 else shown[:297] + '...'}")
-    result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=TOOL_ENV,
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-                            errors="replace")
+    try:
+        result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=TOOL_ENV,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                                errors="replace", timeout=timeout)
+    except subprocess.TimeoutExpired:
+        fail(f"{cmd[0]} timed out after {timeout}s; check cable type/location and close other programmers")
     if log:
         log.parent.mkdir(parents=True, exist_ok=True)
         log.write_text(result.stdout, encoding="utf-8")
@@ -729,6 +732,32 @@ def _not_found(what: str, searched: List[Path], hints: List[str]) -> "NoReturn":
 
 
 def cmd_flash(args: argparse.Namespace) -> int:
+    game = None
+    game_arg = getattr(args, "game", None)
+    if game_arg and args.project != "studio_lcd":
+        fail("--game requires the studio_lcd FPGA platform")
+    game_dir = REPO / "tangnano20k" / "studio_lcd" / "game"
+    if args.project == "studio_lcd" and not getattr(args, "no_game", False):
+        if game_arg or list(game_dir.glob("*.tang.bin")):
+            from studio_game import find_game
+            try:
+                game = find_game(game_arg or game_dir)
+            except ValueError as error:
+                fail(str(error))
+            if not getattr(args, "port", None):
+                fail("Set --port for the USB game loader (COM5, /dev/ttyACM0 or /dev/cu.usbmodem...)")
+            if not args.dry_run:
+                try:
+                    import serial
+                except ImportError:
+                    fail("Install the USB loader dependency: python -m pip install pyserial")
+                try:
+                    with serial.Serial(port=None) as connection:
+                        connection.dtr = connection.rts = False
+                        connection.port = args.port
+                        connection.open()
+                except (OSError, serial.SerialException) as error:
+                    fail("USB loader preflight failed; install pyserial and close other serial clients: " + str(error))
     # ---- Pick the files: explicit paths win, otherwise the newest from any route.
     if args.bitstream:
         bitstream = Path(args.bitstream)
@@ -774,6 +803,8 @@ def cmd_flash(args: argparse.Namespace) -> int:
         if not install or not install.programmer_cli:
             fail("no flash tool: install openFPGALoader, or Gowin EDA with its Programmer")
         base = [install.programmer_cli, "--device", "GW2AR-18C", "--cable-index", str(args.cable_index)]
+        if getattr(args, "location", None) is not None:
+            base += ["--location", str(args.location)]
         if firmware:
             commands.append(base + ["--run", "36", "--spiaddr", offset, "--fsFile", firmware])
         if args.sram:
@@ -785,7 +816,18 @@ def cmd_flash(args: argparse.Namespace) -> int:
         if args.dry_run:
             print("  would run: " + " ".join(str(c) for c in command))
         else:
-            run(command)
+            result = run(command, timeout=180)
+            print(result.stdout)
+    if game:
+        command = [sys.executable, REPO / "scripts/load-studio-lcd.py", "--port", args.port,
+                   "--firmware", game, "--report", getattr(args, "report", None) or BUILD / "hardware/studio-flash.json"]
+        if args.dry_run:
+            print("  would load game: " + " ".join(str(c) for c in command))
+        else:
+            print(run(command).stdout)
+            print("Game loaded into SDRAM. Run the loader again after power-off or FPGA reprogramming.")
+    elif args.project == "studio_lcd":
+        print("Platform only: the LCD waits for a native Studio game over USB.")
     print("dry run, nothing written" if args.dry_run else "done")
     return 0
 
@@ -951,8 +993,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     flash.add_argument("--bitstream", help="bitstream to use instead of the build/fetch output")
     flash.add_argument("--firmware", help="firmware.bin to write at 0x500000 (gbtang/snestang)")
     flash.add_argument("--no-firmware", action="store_true", help="skip the firmware write")
+    flash.add_argument("--game", help="studio_lcd: native *.tang.bin or folder containing one and build.json")
+    flash.add_argument("--no-game", action="store_true", help="skip studio_lcd/game folder auto-loading")
+    flash.add_argument("--port", help="USB UART for the Studio game loader")
+    flash.add_argument("--report", help="JSON game transfer, CPU and frame-rate report")
     flash.add_argument("--tool", choices=["auto", "openfpgaloader", "gowin"], default="auto")
     flash.add_argument("--gowin", help="Gowin EDA install folder, for --tool gowin")
+    flash.add_argument("--location", type=int, help="Gowin USB location from programmer_cli --scan-cables")
     flash.add_argument("--cable-index", type=int, default=4,
                        help="Gowin programmer cable index (4 = Tang Nano 20K onboard debugger)")
     flash.add_argument("--dry-run", action="store_true",

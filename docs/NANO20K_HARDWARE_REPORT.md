@@ -157,3 +157,38 @@ Studio's updated branch contains current main. Its 75 targeted tests, CLI
 build, native exports and ARM ROM builds passed locally. The browser build,
 Windows installer and test/ROM CI jobs passed. The Tang changes remain in
 the open Studio, engine and FPGA pull requests.
+
+## Studio build, flash and browser update
+
+The later 1 October check uses Studio 4.4.9 and engine `4e780bb`. The Studio
+Handheld panel builds the current project and exposes build, load and
+FPGA-program-plus-load actions. The equivalent source-build command was run
+against the real board, using Gowin cable type 4/location 289 and COM5.
+The project-directory flash path was also checked: one native `*.tang.bin`
+with a matching adjacent `build.json` is loaded after FPGA programming.
+
+| Latest game | Firmware size | CRC32 | Update rate | CPU fault |
+|---|---:|---|---:|---|
+| Sunstone Relay | 35,536 bytes | `ee54d55f` | 28.915 fps | false |
+| Poachermon | 34,096 bytes | `d2265165` | 28.928 fps | false |
+
+Both CRC-checked uploads succeeded. Sunstone is running again after the
+Poachermon check. [Structured results](reports/studio-flow-2026-10-01.json)
+record the hashes and debug replies. The RTL was not changed by this update;
+the resource usage, timing and power estimates above remain the same.
+
+![Current Sunstone scene and dialogue](images/studio-latest-lcd.jpg)
+
+![Current Poachermon on the LCD](images/poachermon-latest-lcd.jpg)
+
+These camera captures confirm displayed content, not calibrated colors or
+electrical measurements. Native Studio UI clicking remains unverified because
+the Windows desktop-control helper failed to initialize; panel and command
+tests passed, and the underlying full command ran on hardware. The browser
+games were rebuilt with refined backgrounds and checked for boot, dialogue
+advance and movement. Full quest completion was not retested.
+
+Putting the FPGA image in nonvolatile flash does not persist the game:
+game firmware runs from SDRAM and requires another upload after power-off.
+The local `studio_lcd/game/` directory contains the latest Sunstone native
+firmware and manifest; these generated game files are ignored by Git.

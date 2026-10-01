@@ -69,6 +69,30 @@ graphics, controls and build instructions. Audio, persistent saves and
 external button GPIO assignments remain unfinished. The Game Boy target's
 [separate timing limitation](tangnano20k/gbtang_lcd/README.md) is still open.
 
+## Flash a Studio game
+
+GBA Studio's **Handheld** button builds the open project and can program the
+FPGA before loading the native game. The latest source-to-hardware checks
+passed for both demos: Sunstone Relay at **28.915 fps** and Poachermon at
+**28.928 fps**, with verified CRCs and no CPU faults. See the
+[updated report](docs/NANO20K_HARDWARE_REPORT.md#studio-build-flash-and-browser-update).
+The resource table above still describes the current FPGA image; these game
+and asset changes do not alter its logic or RAM usage.
+
+For a project-directory workflow, put one `*.tang.bin` and its adjacent
+`build.json` in `tangnano20k/studio_lcd/game/`, then run:
+
+```sh
+python3 scripts/gbafpga.py flash studio_lcd --sram --port /dev/ttyUSB0
+```
+
+On this Windows setup the tested Gowin command uses `--port COM5 --tool gowin
+--cable-index 4 --location 289`. USB locations can change; obtain the current
+location with `programmer_cli --scan-cables`. Use `--game /path/to/firmware`
+for another directory, or `--no-game` to program only the FPGA. A `.gba` ARM
+ROM cannot be loaded into this native Studio target. FPGA flash persists,
+but the game must be loaded again after power-off because it runs from SDRAM.
+
 ## Quick start
 
 The [hardware BOM](hardware/BOM.md) lists the working board/LCD setup and

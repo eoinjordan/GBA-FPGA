@@ -8,6 +8,7 @@ import struct
 import time
 import zlib
 import serial
+from studio_game import find_game
 
 def status(connection,timeout=5):
     deadline=time.monotonic()+timeout; data=bytearray()
@@ -31,6 +32,8 @@ def main():
     if not 0<=args.hold<=60 or not 0<=args.benchmark<=60: parser.error('Durations must be 0–60 seconds')
     report={}; payload=None
     if args.firmware:
+        try: args.firmware=find_game(args.firmware)
+        except ValueError as error: parser.error(str(error))
         payload=args.firmware.read_bytes()
         manifest=json.loads(args.firmware.with_name('build.json').read_text(encoding='utf-8'))
         digest=hashlib.sha256(payload).hexdigest()

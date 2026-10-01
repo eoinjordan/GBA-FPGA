@@ -14,6 +14,7 @@ tangnano20k/*/impl/*
 # Bitstreams, firmware and game images are never committed
 *.fs
 *.bin
+tangnano20k/studio_lcd/game/build.json
 *.bit
 *.sof
 *.pof
